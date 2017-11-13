@@ -1,0 +1,71 @@
+@import "app/libs/bootstrap-grid/bootstrap-grid"
+@import "app/libs/font-awesome/css/font-awesome"
+@import "app/libs/jquery.steps/demo/css/jquery.steps"
+@import "app/libs/sweetalert2/dist/sweetalert2"
+@import "magnific-popup"
+@import "magnific-popup-animation"
+@import "slick"
+@import "slick-theme"
+@import "custom-forms"
+
+/* Dots */
+
+
+.slick-dots
+    position: absolute
+    bottom: 10px
+    display: block
+    width: 100%
+    padding: 0
+    margin: 0
+    list-style: none
+    text-align: center
+
+.slick-dots li
+    position: relative
+    display: inline-block
+    width: 40px
+    height: 20px
+    margin: 0 5px
+    padding: 0
+    cursor: pointer
+
+.slick-dots li button
+    font-size: 0
+    line-height: 0
+    display: block
+    width: 40px
+    height: 20px
+    padding: 5px
+    cursor: pointer
+    color: transparent
+    border: 0
+    outline: none
+    background: transparent
+
+.slick-dots li button:hover,
+.slick-dots li button:focus
+    outline: none
+
+.slick-dots li button:hover:before,
+.slick-dots li button:focus:before
+    opacity: 1
+
+.slick-dots li button:before
+    position: absolute
+    top: 0
+    left: 0
+    width: 40px
+    height: 2px
+    background-color: #fff
+    content: ''
+    text-align: center
+    opacity: .25
+    color: black
+    -webkit-font-smoothing: antialiased
+    -moz-osx-font-smoothing: grayscale
+
+.slick-dots li.slick-active button:before
+    opacity: .75
+    color: black
+
