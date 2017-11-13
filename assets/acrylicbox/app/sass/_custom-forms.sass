@@ -1,0 +1,228 @@
+@-moz-keyframes borderscale 
+  50% 
+    box-shadow: 0 0 0 2px #999
+  
+
+@-webkit-keyframes borderscale 
+  50% 
+    box-shadow: 0 0 0 2px #999
+  
+
+@keyframes borderscale 
+  50% 
+    box-shadow: 0 0 0 2px #999
+  
+
+
+
+// form 
+//   background: #fff
+//   border-radius: 20px
+//   box-shadow: 5px 5px 15px rgba(107, 173, 182, 0.6)
+//   padding: 1rem 2rem
+//   min-width: 30vw
+
+form li 
+  margin: 0.3rem 0
+
+// form div 
+//   margin: 1.5rem 0
+
+
+ul 
+  list-style: none !important
+  margin: 0
+  padding: 0
+
+
+input[type="checkbox"],
+input[type="radio"] 
+  border: 0
+  clip: rect(0 0 0 0)
+  height: 1px
+  margin: -1px
+  overflow: hidden
+  padding: 0
+  position: absolute
+  width: 1px
+
+input[type="checkbox"]:hover + label:before,
+input[type="radio"]:hover + label:before 
+  border-color: #999
+
+input[type="checkbox"]:active + label:before,
+input[type="radio"]:active + label:before 
+  transition-duration: 0
+  filter: brightness(0.2)
+
+input[type="checkbox"] + label,
+input[type="radio"] + label 
+  position: relative
+  padding-left: 4rem
+  font-weight: normal
+  font-size: 1.25rem
+  text-transform: none
+  
+
+input[type="checkbox"] + label:before, input[type="checkbox"] + label:after,
+input[type="radio"] + label:before,
+input[type="radio"] + label:after 
+  box-sizing: content-box
+  position: absolute
+  content: ''
+  display: block
+  left: 0
+
+input[type="checkbox"] + label:before,
+input[type="radio"] + label:before 
+  top: 50%
+  width: 30px
+  height: 30px
+  margin-top: -17px
+  border: 2px solid #d9d9d9
+  text-align: center
+
+input[type="checkbox"] + label:after,
+input[type="radio"] + label:after 
+  background-color: $accent
+  top: 50%
+  left: 7px
+  width: 20px
+  height: 20px
+  margin-top: -10px
+  transform: scale(0)
+  transform-origin: 50%
+  transition: transform 200ms ease-out
+
+
+input[type="radio"]:checked + label:before 
+  -moz-animation: borderscale 300ms ease-in
+  -webkit-animation: borderscale 300ms ease-in
+  animation: borderscale 300ms ease-in
+  background-color: #fff
+
+input[type="radio"]:checked + label:after 
+  transform: scale(1)
+
+input[type="radio"] + label:before, input[type="radio"] + label:after 
+  border-radius: 50%
+
+
+input[type="checkbox"] + label:after 
+  background-color: transparent
+  top: 50%
+  left: 9px
+  width: 13px
+  height: 6px
+  margin-top: -6px
+  border-style: solid
+  border-color: $accent
+  border-width: 0 0 3px 3px
+  -moz-transform: rotate(-45deg) scale(0)
+  -ms-transform: rotate(-45deg) scale(0)
+  -webkit-transform: rotate(-45deg) scale(0)
+  transform: rotate(-45deg) scale(0)
+  -moz-transition: none
+  -o-transition: none
+  -webkit-transition: none
+  transition: none
+
+input[type="checkbox"]:checked + label:before 
+  -moz-animation: borderscale 200ms ease-in
+  -webkit-animation: borderscale 200ms ease-in
+  animation: borderscale 200ms ease-in
+
+input[type="checkbox"]:checked + label:after 
+  content: ''
+  -moz-transform: rotate(-45deg) scale(1)
+  -ms-transform: rotate(-45deg) scale(1)
+  -webkit-transform: rotate(-45deg) scale(1)
+  transform: rotate(-45deg) scale(1)
+  -moz-transition: -moz-transform 200ms ease-out
+  -o-transition: -o-transform 200ms ease-out
+  -webkit-transition: -webkit-transform 200ms ease-out
+  transition: transform 200ms ease-out
+
+
+input[type="text"] 
+  font-weight: normal
+  font-size: 16px
+  line-height: 24px
+  padding: 5px 10px
+  background-color: #fff
+  border: 2px solid #d9d9d9
+
+input[type="text"]:focus 
+  outline: none
+
+input[type="text"]:focus, input[type="text"]:hover 
+  border-color: #999
+
+.with_image
+  input[type="checkbox"]:checked + label
+    background-color: #efefef
+  input[type="radio"]:checked + label
+    background-color: #efefef
+  input[type="checkbox"] + label:before, input[type="checkbox"] + label:after,
+  input[type="radio"] + label:before,
+  input[type="radio"] + label:after 
+    left: 10px
+  input[type="checkbox"] + label:after 
+    left: 19px
+  input[type="radio"] + label:after 
+    left: 17px 
+  label
+    width: 100%
+    padding: 1rem
+    border: 1px solid #eee
+    div
+      margin-bottom: 0.5rem
+      line-height: 1.4
+      height: 2.8em
+// select 
+//   font-weight: normal
+//   font-size: 16px
+//   line-height: 24px
+//   padding: 5px 10px
+//   background-color: #fff
+//   border: 2px solid #d9d9d9
+//   padding-right: 30px
+//   border-radius: 0
+//   -webkit-appearance: none
+//   -moz-appearance: none
+//   appearance: none
+//   /* Adding a custom arrow */
+//   background-image: url(data:image/gifbase64,R0lGODlhCAAEAJECAFpaWgAAAP///wAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4zLWMwMTEgNjYuMTQ1NjYxLCAyMDEyLzAyLzA2LTE0OjU2OjI3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjQyNjQ4NTdEMjUwRjExRTZCMzZDQjU2MjJCNUQ1RkREIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjQyNjQ4NTdFMjUwRjExRTZCMzZDQjU2MjJCNUQ1RkREIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NDI2NDg1N0IyNTBGMTFFNkIzNkNCNTYyMkI1RDVGREQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NDI2NDg1N0MyNTBGMTFFNkIzNkNCNTYyMkI1RDVGREQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4B//79/Pv6+fj39vX08/Lx8O/u7ezr6uno5+bl5OPi4eDf3t3c29rZ2NfW1dTT0tHQz87NzMvKycjHxsXEw8LBwL++vby7urm4t7a1tLOysbCvrq2sq6qpqKempaSjoqGgn56dnJuamZiXlpWUk5KRkI+OjYyLiomIh4aFhIOCgYB/fn18e3p5eHd2dXRzcnFwb25tbGtqaWhnZmVkY2JhYF9eXVxbWllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkFAPz49PDs6OTg3NjU0MzIxMC8uLSwrKikoJyYlJCMiISAfHh0cGxoZGBcWFRQTEhEQDw4NDAsKCQgHBgUEAwIBAAAh+QQBAAACACwAAAAACAAEAAACCkSOIJbirNyLogAAOw==)
+//   background-repeat: no-repeat
+//   background-position: calc(100% - 10px) center
+//   // height: 36px
+
+// select:focus 
+//   outline: none
+
+// select:focus, select:hover 
+//   border-color: #999
+
+// select:focus, select:hover 
+//   outline: none
+
+// select:active 
+//   border-color: #d9d9d9
+
+// select:-moz-focusring 
+//   color: transparent
+//   text-shadow: 0 0 0 #000
+
+
+/* IE 10/11+ - This hides native dropdown button arrow so it will have the custom appearance, IE 9 and earlier get a native select - targeting media query hack via http://browserhacks.com/#hack-28f493d247a12ab654f6c3637f6978d5 - looking for better ways to achieve this targeting */
+/* The second rule removes the odd blue bg color behind the text in the select button in IE 10/11 and sets the text color to match the focus style's - fix via http://stackoverflow.com/questions/17553300/change-ie-background-color-on-unopened-focused-select-box */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) 
+  // select::-ms-expand 
+  //   display: none
+  
+
+  // select:focus::-ms-value 
+  //   background: transparent
+  //   color: grey
+  
+
