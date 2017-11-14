@@ -10,5 +10,23 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
+    private String botToken;
 
+    private String botUsername;
+
+    public String getBotToken() {
+        return botToken;
+    }
+
+    public void setBotToken(String botToken) {
+        this.botToken = botToken;
+    }
+
+    public String getBotUsername() {
+        return botUsername;
+    }
+
+    public void setBotUsername(String botUsername) {
+        this.botUsername = botUsername;
+    }
 }
