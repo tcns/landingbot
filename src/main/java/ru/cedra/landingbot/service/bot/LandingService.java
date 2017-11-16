@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import ru.cedra.landingbot.domain.ChatState;
+import ru.cedra.landingbot.domain.MainPage;
+import ru.cedra.landingbot.repository.MainPageRepository;
 import ru.cedra.metrics.config.Constants;
 import ru.cedra.metrics.domain.ChatState;
 import ru.cedra.metrics.domain.ChatStates;
@@ -38,7 +41,7 @@ import java.util.stream.Collectors;
 public class LandingService {
 
     @Autowired
-    MetricRepository metricRepository;
+    MainPageRepository mainPageRepository;
 
     @Autowired
     ChatStateService chatStateService;
@@ -87,14 +90,14 @@ public class LandingService {
         ChatState chatState = chatStateService.getCurrentChatState(chatId);
         int chatStep = chatState.getStep();
         SendMessage sendMessage;
-        Long metricId = 0L;
+        Long pageId = 0L;
         boolean isEdit = false;
         String editType = "";
         if (chatState.getData().startsWith(Commands.EDIT_ONE_PARAM_FINAL)) {
             isEdit = true;
             editType = Commands.EDIT_ONE_PARAM_FINAL;
             try {
-                metricId = Long.parseLong(chatState.getData().substring(Commands.EDIT_ONE_PARAM_FINAL
+                pageId = Long.parseLong(chatState.getData().substring(Commands.EDIT_ONE_PARAM_FINAL
 
                                                                             .length()));
             } catch (Exception ex){}
@@ -103,12 +106,12 @@ public class LandingService {
             editType = Commands.DEALS_EDIT_FINAL;
         } else {
             try {
-                metricId = Long.parseLong(chatState.getData());
+                pageId = Long.parseLong(chatState.getData());
             } catch (Exception ex){}
         }
 
 
-        Metric metric = metricRepository.findOne(metricId);
+        MainPage metric = mainPageRepository.findOne(pageId);
         try {
             switch (chatStep) {
                 case ChatStates.COUNT_STEP: metric.setCountName(input); break;
