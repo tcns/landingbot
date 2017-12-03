@@ -1,6 +1,8 @@
 package ru.cedra.landingbot.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ru.cedra.landingbot.anno.Cast;
+import ru.cedra.landingbot.anno.CastMethod;
 import ru.cedra.landingbot.anno.Step;
 
 import javax.persistence.*;
@@ -59,18 +61,22 @@ public class MainPage implements Serializable {
 
     @Column
     @Step(ChatSteps.HAS_FORM_CLIENT_NAME_STEP)
+    @Cast(CastMethod.BOOLEAN)
     private boolean hasFormClientName;
 
     @Column
     @Step(ChatSteps.HAS_FORM_CLIENT_EMAIL_STEP)
+    @Cast(CastMethod.BOOLEAN)
     private boolean  hasFormClientEmail;
 
     @Column
     @Step(ChatSteps.HAS_FORM_CLIENT_PHONE_STEP)
+    @Cast(CastMethod.BOOLEAN)
     private boolean  hasFormClientPhone;
 
     @Column
     @Step(ChatSteps.FORM_BUTTON_TEXT_STEP)
+    @Cast(CastMethod.BOOLEAN)
     private boolean formButtonText;
 
     @Column

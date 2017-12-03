@@ -1,5 +1,6 @@
 package ru.cedra.landingbot;
 
+import org.telegram.telegrambots.ApiContextInitializer;
 import ru.cedra.landingbot.config.ApplicationProperties;
 import ru.cedra.landingbot.config.DefaultProfileUtil;
 
@@ -63,6 +64,7 @@ public class LandingbotApp {
     public static void main(String[] args) throws UnknownHostException {
         SpringApplication app = new SpringApplication(LandingbotApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
+        ApiContextInitializer.init();
         Environment env = app.run(args).getEnvironment();
         String protocol = "http";
         if (env.getProperty("server.ssl.key-store") != null) {

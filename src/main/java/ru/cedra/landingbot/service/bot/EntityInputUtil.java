@@ -1,25 +1,51 @@
 package ru.cedra.landingbot.service.bot;
 
+import org.apache.commons.beanutils.BeanUtils;
+import ru.cedra.landingbot.anno.Cast;
 import ru.cedra.landingbot.anno.Step;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Function;
+
 
 public class EntityInputUtil<T> {
 
-    public void performInput(Class<T> tClass) {
-        List<Field> fields = Arrays.asList(tClass.getFields());
-        Map<Integer, Field> stepFieldMap = new HashMap<>();
+    Map<Integer, Field> stepFieldMap = new HashMap<>();
+    T object;
+
+    Map<Integer, Function<String, Object>> customMappings = new HashMap<>();
+
+    public void registerCustomMapping(Integer step, Function<String, Object> method) {
+        customMappings.put(step, method);
+    }
+
+    private void register (T entity) {
+        this.object = entity;
+        Class<T> tClass = (Class<T>) object.getClass();
+        List<Field> fields = Arrays.asList(tClass.getDeclaredFields());
         fields.forEach(field -> {
-            List<Annotation> annotations = Arrays.asList(field.getDeclaredAnnotations());
-            Optional<Annotation> stepOpt = annotations.stream().filter(a->a.annotationType().equals(Step.class)).findFirst();
-            if (stepOpt.isPresent()) {
-                Step step = (Step) stepOpt.get();
+            Step step = field.getAnnotation(Step.class);
+            if (step != null) {
                 stepFieldMap.put(step.value(), field);
             }
         });
 
 
+    }
+    public void setField(Integer step, String value, T entity) throws Exception {
+        register(entity);
+        Field field = stepFieldMap.get(step);
+        try {
+            Object valueToSet = value;
+            if (customMappings.get(step) != null) {
+                valueToSet = customMappings.get(step).apply(value);
+            } else if (field.getAnnotation(Cast.class)!=null) {
+                valueToSet = field.getAnnotation(Cast.class).value().cast().apply(value);
+            }
+            BeanUtils.setProperty(entity, field.getName(), value);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }

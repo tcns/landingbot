@@ -49,10 +49,10 @@ public class LandingBot extends TelegramLongPollingBot {
             int chatStep = chatStateService.getCurrentStep(chatId);
             SendMessage message = new SendMessage();
             if (callbackData.startsWith(Commands.GET_LANDING)) {
-                message = landingService.getMetricDefinition(chatId,
+                message = landingService.getPageDefinition(chatId,
                                                             Long.parseLong(callbackData.substring(Commands.GET_LANDING.length())));
             } else if (callbackData.startsWith(Commands.DELETE_ONE_LANDING)) {
-                message = landingService.deleteMetric(chatId,
+                message = landingService.deletePage(chatId,
                                                             Long.parseLong(callbackData.substring(Commands.DELETE_ONE_LANDING.length())));
             } else if (callbackData.startsWith(Commands.EDIT_ONE_LANDING)) {
                 message = landingService.editMetric(chatId,
@@ -61,20 +61,6 @@ public class LandingBot extends TelegramLongPollingBot {
                 String signature = callbackData.substring(Commands.EDIT_ONE_PARAM.length());
                 String[] kv = signature.split("-");
                 message = landingService.initEdition(chatId, Integer.parseInt(kv[1]), kv[0]);
-            } else if (callbackData.startsWith(Commands.STAT_ONE_LANDING)) {
-                message = landingService.getMetricReportNow(chatId,
-                                                  Long.parseLong(callbackData.substring(Commands.STAT_ONE_LANDING.length())));
-            } else if (callbackData.startsWith(Commands.DEALS_EDIT)) {
-            } else if (callbackData.startsWith(Commands.DEALS_DATE)) {
-                message = landingService.editDeals(chatId, callbackData.substring(Commands.DEALS_EDIT.length()));
-            } else  {
-                switch (chatStep) {
-                    case ChatSteps.COUNT_STEP:
-                    case ChatSteps.GOAL_STEP:
-                        message = landingService.handleInput(callbackData, chatId);
-                        break;
-
-                }
             }
 
             try {
@@ -82,11 +68,14 @@ public class LandingBot extends TelegramLongPollingBot {
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
-        } else if (update.hasMessage() && update.getMessage().hasText()) {
+        } else if (update.hasMessage()) {
             Long chatId = update.getMessage().getChatId();
 
             SendMessage message = new SendMessage();
             String input = update.getMessage().getText();
+            if (input == null) {
+                input = "";
+            }
             if (chatUserService.getChatUser(chatId) == null) {
                 input = Commands.START;
             }
@@ -108,7 +97,7 @@ public class LandingBot extends TelegramLongPollingBot {
                         case 0: message = getDefaultMessage(chatId);
                             break;
                         default:
-                             message = landingService.handleInput(update.getMessage().getText(), chatId);
+                             message = landingService.handleInput(update.getMessage(), chatId, this);
                             break;
                     }
                     break;

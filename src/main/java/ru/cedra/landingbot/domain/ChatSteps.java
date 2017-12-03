@@ -36,6 +36,7 @@ public class ChatSteps {
     public static final int YA_COUNTER_STEP = 17;
     public static final int GA_COUNTER_STEP = 18;
     public static final int PIC_STEP = 19;
+    public static final int FINAL_STEP = 20;
 
 
 
@@ -44,6 +45,7 @@ public class ChatSteps {
         HAS_FORM_CLIENT_EMAIL_STEP, HAS_FORM_CLIENT_PHONE_STEP, FORM_BUTTON_TEXT_STEP, ADDRESS_STEP, YA_COUNTER_STEP, GA_COUNTER_STEP, PIC_STEP);
 
 
+    public static Set<Integer> photoSteps = Sets.newHashSet(LOGO_STEP, PIC_STEP);
     static {
         states.put(NAME_STEP, "Введите название проекта\n" +
             "(Будет использоваться в названиях)");
@@ -79,6 +81,7 @@ public class ChatSteps {
         states.put(YA_COUNTER_STEP, "Введите код счетчика яндекс метрики или Google Analitics (N – пропустить)");
         states.put(GA_COUNTER_STEP, "Введите реквизиты компании (N – пропустить) (Будет использовано в контактных данных)");
         states.put(PIC_STEP, "Прикрепите изображение, которое будет использовано на заднем фоне первого экрана.");
+        states.put(FINAL_STEP, "Сайт сгенерирован!");
 
     }
 }

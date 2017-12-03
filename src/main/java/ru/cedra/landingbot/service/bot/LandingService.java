@@ -1,37 +1,24 @@
 package ru.cedra.landingbot.service.bot;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import com.cloudinary.Cloudinary;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.PhotoSize;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import ru.cedra.landingbot.config.ApplicationProperties;
 import ru.cedra.landingbot.domain.ChatState;
+import ru.cedra.landingbot.domain.ChatSteps;
+import ru.cedra.landingbot.domain.Commands;
 import ru.cedra.landingbot.domain.MainPage;
 import ru.cedra.landingbot.repository.MainPageRepository;
-import ru.cedra.metrics.config.Constants;
-import ru.cedra.metrics.domain.ChatState;
-import ru.cedra.metrics.domain.ChatStates;
-import ru.cedra.metrics.domain.Commands;
-import ru.cedra.metrics.domain.Metric;
-import ru.cedra.metrics.repository.MetricRepository;
-import ru.cedra.metrics.service.ChatUserService;
-import ru.cedra.metrics.service.dto.Counter;
-import ru.cedra.metrics.service.metric.CommonStatsService;
-import ru.cedra.metrics.service.metric.YandexMetricService;
-import ru.cedra.metrics.service.util.TaskUtil;
+import ru.cedra.landingbot.service.ChatUserService;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.io.IOException;
+import java.util.*;
 
 
 /**
@@ -47,34 +34,23 @@ public class LandingService {
     ChatStateService chatStateService;
 
     @Autowired
-    ChatUserService chatUserService;
+    ChatUserService service;
 
     @Autowired
-    YandexMetricService yandexMetricService;
+    Cloudinary cloudinary;
 
     @Autowired
-    LandingBot landingBot;
-
-    @Autowired
-    TaskScheduler taskScheduler;
-
-    @Autowired
-    CalcService calcService;
-
-    @Autowired
-    CommonStatsService commonStatsService;
+    ApplicationProperties applicationProperties;
 
     public SendMessage initConversation (Long chatId) {
 
-        List<Counter> counts = yandexMetricService.getCounts(chatId);
         SendMessage message = new SendMessage()
             .setChatId(chatId)
-            .setReplyMarkup(getKeyBoard(counts.stream().map(a-> new ImmutablePair<>(a.getId(), a.getName())).collect(Collectors.toList())))
-            .setText(ChatStates.states.get(1));
-        Metric metric = new Metric();
-        metric.setChatUser(chatUserService.getChatUser(chatId));
-        metric = metricRepository.save(metric);
-        chatStateService.updateChatStep(1, chatId, metric.getId()+"");
+            .setText(ChatSteps.states.get(1));
+        MainPage page = new MainPage();
+        page.setChatUser(service.getChatUser(chatId));
+        page = mainPageRepository.save(page);
+        chatStateService.updateChatStep(1, chatId, page.getId()+"");
         return message;
     }
 
@@ -86,9 +62,27 @@ public class LandingService {
         return message;
     }
 
-    public SendMessage handleInput(String input, Long chatId) {
+    private String handlePhoto(Message message, LandingBot landingBot) {
+        PhotoSize fileSize = BotUtils.getPhoto(message);
+        String filePath = BotUtils.getFilePath(fileSize, landingBot);
+        String fullPath = org.telegram.telegrambots.api.objects.File.getFileUrl(applicationProperties.getBotToken(), filePath);
+        try {
+            Map fileConfig = cloudinary.uploader().upload(fullPath, new HashMap());
+            return (String) fileConfig.get("url");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public SendMessage handleInput(Message message, Long chatId, LandingBot landingBot) {
+        String input = message.getText();
         ChatState chatState = chatStateService.getCurrentChatState(chatId);
         int chatStep = chatState.getStep();
+        if (ChatSteps.photoSteps.contains(chatStep)) {
+            input = handlePhoto(message, landingBot);
+        }
+
         SendMessage sendMessage;
         Long pageId = 0L;
         boolean isEdit = false;
@@ -98,12 +92,8 @@ public class LandingService {
             editType = Commands.EDIT_ONE_PARAM_FINAL;
             try {
                 pageId = Long.parseLong(chatState.getData().substring(Commands.EDIT_ONE_PARAM_FINAL
-
                                                                             .length()));
             } catch (Exception ex){}
-        } else  if (chatState.getData().startsWith(Commands.DEALS_EDIT_FINAL)){
-            isEdit = true;
-            editType = Commands.DEALS_EDIT_FINAL;
         } else {
             try {
                 pageId = Long.parseLong(chatState.getData());
@@ -111,139 +101,60 @@ public class LandingService {
         }
 
 
-        MainPage metric = mainPageRepository.findOne(pageId);
+        MainPage page = mainPageRepository.findOne(pageId);
+        EntityInputUtil<MainPage> mainPageEntityInputUtil = new EntityInputUtil<>();
         try {
-            switch (chatStep) {
-                case ChatStates.COUNT_STEP: metric.setCountName(input); break;
-                case ChatStates.NAME_STEP: metric.setName(input); break;
-                case ChatStates.GOAL_STEP:
-                    metric.setGoalId(input);
-                    break;
-                case ChatStates.INCOME_STEP: metric.setClearIncome(Integer.parseInt(input)); break;
-                case ChatStates.RENT_STEP: metric.setRent(Float.parseFloat(input) / 100.0f); break;
-                case ChatStates.SALE_CONVERSION_STEP: metric.setSaleConversion(Float.parseFloat(input) / 100.0f); break;
-                case ChatStates.AVG_CHECK_STEP: metric.setAvgCheck(Float.parseFloat(input)); break;
-                case ChatStates.SITE_CONVERSION_STEP: metric.setSiteConversion(Float.parseFloat(input) / 100.0f); break;
-                case ChatStates.CLICK_PRICE_STEP: metric.setClickPrice(Float.parseFloat(input)); break;
-                case ChatStates.REPORT_TIME_STEP:
-                    Integer timeReport = Integer.parseInt(input);
-                    if (timeReport < 0 || timeReport > 23) throw  new Exception();
-                    metric.setReportTime(input);
-                    metric.setAskTime(input);
-                    break;
-                case  ChatStates.CAMPAIGNS_IDS:
-                    String[] ids = input.split(" ");
-                    for (String id : ids) {
-                        Integer.parseInt(id.trim());
-                    }
-                    metric.setCampainIds(input);
-                    break;
-                case ChatStates.DEALS_EDIT:
-                    String[] data = chatState.getData().substring(Commands.DEALS_EDIT_FINAL
-                                                                      .length()).split("_");
-                    metricId = Long.parseLong(data[1]);
-                    metric = metricRepository.findOne(metricId);
-                    LocalDate date = Constants.DATE_F.parse(data[0]).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                    saveDeals(input, metricId, date);
-                    break;
-            }
+            mainPageEntityInputUtil.setField(chatStep, input, page);
         } catch (Exception ex) {
             sendMessage = new SendMessage().setText("Вы ввели невалидное значение").
                 setChatId(chatId);
             return sendMessage;
         }
 
-        if (chatStep==ChatStates.METRIC_COMPLETE - 1 ||
+        if (chatStep == ChatSteps.FINAL_STEP - 1 ||
             Commands.EDIT_ONE_PARAM_FINAL.equals(editType)) {
             chatStateService.updateChatStep(0, chatId);
-            metric.setMonthDeals(calcService.calcMonthDeals(metric));
-            if (!isEdit) {
-                metric.setReportFromDate(Timestamp.valueOf(LocalDateTime.now()));
-            }
-            metric.setMonthCount(calcService.calcMonthVisits(
-                metric.getMonthDeals(),
-                metric.getSaleConversion(),
-                metric.getSiteConversion()
-            ));
-
-            sendMessage = new SendMessage().setText(ChatStates.states.get(ChatStates.METRIC_COMPLETE))
+            sendMessage = new SendMessage().setText(ChatSteps.states.get(ChatSteps.FINAL_STEP))
                 .setChatId(chatId);
             if (Commands.EDIT_ONE_PARAM_FINAL.equals(editType)) {
                 sendMessage.setText("Значение успешно обновлено!");
-            } else {
-                TaskUtil.deleteTask(metricId);
-                TaskUtil.registerReportTask(landingBot, taskScheduler, metric, commonStatsService);
-                TaskUtil.registerFinalUpdateTask(landingBot, taskScheduler, metric, commonStatsService);
             }
         } else if (Commands.DEALS_EDIT_FINAL.equals(editType)) {
             chatStateService.updateChatStep(0, chatId);
-            sendMessage = getMetricReportNow(chatId, metricId);
+            sendMessage = chatStateService.updateStepAndGetMessage(0, chatId, "Значение успешно обновлено");
         } else {
-            sendMessage = chatStateService.updateStepAndGetMessage(chatStep + 1, chatId, metricId+"");
-            if (chatStep == ChatStates.GOAL_STEP - 1) {
-                sendMessage.setReplyMarkup(getKeyBoard(
-                    yandexMetricService.getGoals(chatId, metric.getCountName())));
-            }
+            sendMessage = chatStateService.updateStepAndGetMessage(chatStep + 1, chatId, pageId + "");
         }
 
-        metricRepository.save(metric);
+        mainPageRepository.save(page);
         return sendMessage;
 
 
     }
 
-    public void saveDeals(String input, Long metricId, LocalDate date) {
-        String[] callsAndDeals = input.split(" ");
-        commonStatsService.updateCallsAndDeals(
-            Integer.parseInt(callsAndDeals[0]),
-            Integer.parseInt(callsAndDeals[1]),
-            Float.parseFloat(callsAndDeals[2]),
-            metricId,
-            date
-        );
-    }
 
 
 
-    public SendMessage getMetricDefinition (Long chatId, Long metricId) {
-            Metric metric = metricRepository.findOne(metricId);
-            String metricDefinition = "";
-            if (!metric.getChatUser().getTelegramChatId().equals(chatId)) {
-                metricDefinition = "Метрика не найдена";
+    public SendMessage getPageDefinition (Long chatId, Long pageId) {
+            MainPage page = mainPageRepository.findOne(pageId);
+            String pageDefinition = "";
+            if (!page.getChatUser().getTelegramChatId().equals(chatId)) {
+                pageDefinition = "Страница не найдена";
             } else {
-                metricDefinition = metric.toString();
+                pageDefinition = page.toString();
             }
             SendMessage sendMessage = new SendMessage()
                 .setChatId(chatId)
-                .setText(metricDefinition);
+                .setText(pageDefinition);
             return sendMessage;
     }
 
-    public SendMessage getMetricReportNow (Long chatId, Long metricId) {
-        Metric metric = metricRepository.findOne(metricId);
-        String report = commonStatsService.getReport(metric.getId());
+    public SendMessage downloadPageNow (Long chatId, Long metricId) {
+        MainPage mainPage = mainPageRepository.findOne(metricId);
         SendMessage sendMessage = new SendMessage()
             .setChatId(chatId)
-            .setText(report);
+            .setText(mainPage.toString());
         return sendMessage;
-    }
-
-    public SendMessage getMetricList(Long chatId, String command) {
-        Set<Metric> metrics = metricRepository.findByChatUser_TelegramChatId(chatId);
-        InlineKeyboardMarkup replyMarkup = new InlineKeyboardMarkup();
-        final List<List<InlineKeyboardButton>> keyboardButtons = new ArrayList<>(metrics.size());
-
-        metrics.stream().forEach((metric) -> {
-            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-            inlineKeyboardButton.setText(metric.getName()==null?"Не указано":metric.getName());
-            inlineKeyboardButton.setCallbackData(command+metric.getId());
-            keyboardButtons.add(Collections.singletonList(inlineKeyboardButton));
-        });
-
-        replyMarkup.setKeyboard(keyboardButtons);
-        return new SendMessage().setText("список отчетов")
-                                .setChatId(chatId)
-                                .setReplyMarkup(replyMarkup);
     }
 
 
@@ -262,16 +173,16 @@ public class LandingService {
         return replyMarkup;
     }
 
-    private InlineKeyboardMarkup getFieldKeyBoard(Long metricId) {
+    private InlineKeyboardMarkup getFieldKeyBoard(Long siteId) {
         InlineKeyboardMarkup replyMarkup = new InlineKeyboardMarkup();
-        final List<List<InlineKeyboardButton>> keyboardButtons = new ArrayList<>(ChatStates.states.keySet().size());
+        final List<List<InlineKeyboardButton>> keyboardButtons = new ArrayList<>(ChatSteps.states.keySet().size());
 
-        ChatStates.states.forEach((key, value) -> {
+        ChatSteps.states.forEach((key, value) -> {
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
             inlineKeyboardButton.setText(value);
             inlineKeyboardButton.setCallbackData(
-                Commands.EDIT_ONE_PARAM + metricId + "-" + key);
-            if (ChatStates.paramStates.contains(key)) {
+                Commands.EDIT_ONE_PARAM + siteId + "-" + key);
+            if (ChatSteps.mainPageParamsState.contains(key)) {
                 keyboardButtons.add(Collections.singletonList(inlineKeyboardButton));
             }
         });
@@ -280,8 +191,8 @@ public class LandingService {
         return replyMarkup;
     }
 
-    public List<Metric> findAll () {
-        return metricRepository.findAll();
+    public List<MainPage> findAll () {
+        return mainPageRepository.findAll();
     }
 
     public SendMessage editMetric (Long chatId, Long metricId) {
@@ -291,24 +202,16 @@ public class LandingService {
             .setReplyMarkup(getFieldKeyBoard(metricId));
     }
 
-    public SendMessage editDeals (Long chatId, String input) {
-        chatStateService.updateChatStep(ChatStates.DEALS_EDIT, chatId,
-                                        Commands.DEALS_EDIT_FINAL + input);
-        return new SendMessage()
-            .setChatId(chatId)
-            .setText(ChatStates.states.get(ChatStates.DEALS_EDIT));
-    }
 
-    public SendMessage deleteMetric (Long chatId, Long metricId) {
-        Metric metric = metricRepository.getOne(metricId);
+    public SendMessage deletePage (Long chatId, Long pageId) {
+        MainPage page = mainPageRepository.getOne(pageId);
         String name = "";
         try {
-            name = metric.getName();
+            name = page.getName();
         } catch (Exception e){}
-        metricRepository.delete(metricId);
-        TaskUtil.deleteTask(metricId);
+        mainPageRepository.delete(pageId);
         return new SendMessage()
             .setChatId(chatId)
-            .setText("Метрика " + name + " удалена" );
+            .setText("Сайт " + name + " удален" );
     }
 }

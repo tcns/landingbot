@@ -13,6 +13,11 @@ public class ApplicationProperties {
     private String botToken;
 
     private String botUsername;
+    private String cloudinaryCloudName;
+    private String cloudinaryApiKey;
+    private String cloudinaryApiSecret;
+    private String cloudinaryApiUrl;
+    private String templatePath;
 
     public String getBotToken() {
         return botToken;
@@ -28,5 +33,45 @@ public class ApplicationProperties {
 
     public void setBotUsername(String botUsername) {
         this.botUsername = botUsername;
+    }
+
+    public String getCloudinaryCloudName() {
+        return cloudinaryCloudName;
+    }
+
+    public void setCloudinaryCloudName(String cloudinaryCloudName) {
+        this.cloudinaryCloudName = cloudinaryCloudName;
+    }
+
+    public String getCloudinaryApiKey() {
+        return cloudinaryApiKey;
+    }
+
+    public void setCloudinaryApiKey(String cloudinaryApiKey) {
+        this.cloudinaryApiKey = cloudinaryApiKey;
+    }
+
+    public String getCloudinaryApiSecret() {
+        return cloudinaryApiSecret;
+    }
+
+    public void setCloudinaryApiSecret(String cloudinaryApiSecret) {
+        this.cloudinaryApiSecret = cloudinaryApiSecret;
+    }
+
+    public String getCloudinaryApiUrl() {
+        return cloudinaryApiUrl;
+    }
+
+    public void setCloudinaryApiUrl(String cloudinaryApiUrl) {
+        this.cloudinaryApiUrl = cloudinaryApiUrl;
+    }
+
+    public String getTemplatePath() {
+        return templatePath;
+    }
+
+    public void setTemplatePath(String templatePath) {
+        this.templatePath = templatePath;
     }
 }

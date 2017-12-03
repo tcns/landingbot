@@ -2,8 +2,6 @@ package ru.cedra.landingbot.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.cedra.landingbot.domain.MainPage;
-import ru.cedra.metrics.domain.Metric;
-
 import java.util.Set;
 
 

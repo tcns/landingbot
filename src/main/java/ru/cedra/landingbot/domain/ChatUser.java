@@ -68,19 +68,19 @@ public class ChatUser {
         this.chatState = chatState;
     }
 
-    public Set<MainPage> getMetrics() {
-        return landings;
-    }
-
-    public void setMetrics(Set<MainPage> landings) {
-        this.landings = landings;
-    }
-
     public Long getTelegramChatId() {
         return telegramChatId;
     }
 
     public void setTelegramChatId(Long telegramChatId) {
         this.telegramChatId = telegramChatId;
+    }
+
+    public Set<MainPage> getLandings() {
+        return landings;
+    }
+
+    public void setLandings(Set<MainPage> landings) {
+        this.landings = landings;
     }
 }
