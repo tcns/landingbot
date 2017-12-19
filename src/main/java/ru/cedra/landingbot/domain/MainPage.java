@@ -1,6 +1,7 @@
 package ru.cedra.landingbot.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 import ru.cedra.landingbot.anno.Cast;
 import ru.cedra.landingbot.anno.CastMethod;
 import ru.cedra.landingbot.anno.Step;
@@ -10,9 +11,9 @@ import java.io.Serializable;
 
 @Entity
 public class MainPage implements Serializable {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue
     private Long id;
 
     @Column
@@ -265,5 +266,31 @@ public class MainPage implements Serializable {
 
     public void setHasFormClientPhone(boolean hasFormClientPhone) {
         this.hasFormClientPhone = hasFormClientPhone;
+    }
+
+    @Override
+    public String toString() {
+        return "MainPage{" +
+            "name='" + name + '\'' +
+            ", logo='" + logo + '\'' +
+            ", color='" + color + '\'' +
+            ", desc='" + desc + '\'' +
+            ", keywordDesc='" + keywordDesc + '\'' +
+            ", title='" + title + '\'' +
+            ", secondTitle='" + secondTitle + '\'' +
+            ", phone='" + phone + '\'' +
+            ", vk='" + vk + '\'' +
+            ", instagram='" + instagram + '\'' +
+            ", formTitle='" + formTitle + '\'' +
+            ", hasFormClientName=" + hasFormClientName +
+            ", hasFormClientEmail=" + hasFormClientEmail +
+            ", hasFormClientPhone=" + hasFormClientPhone +
+            ", formButtonText=" + formButtonText +
+            ", address='" + address + '\'' +
+            ", yaCounterName='" + yaCounterName + '\'' +
+            ", gaCounterName='" + gaCounterName + '\'' +
+            ", pic='" + pic + '\'' +
+            ", chatUser=" + chatUser +
+            '}';
     }
 }

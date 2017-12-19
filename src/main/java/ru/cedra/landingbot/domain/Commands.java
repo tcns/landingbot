@@ -14,6 +14,8 @@ public class Commands {
 
     public static final String LANDING_LIST = "/landinglist";
 
+    public static final String LANDING_EXPORT = "/landingexport";
+
     public static final String LANDING_STATS = "/landingstats";
 
     public static final String DEALS = "/deals";
@@ -31,6 +33,8 @@ public class Commands {
     public static final String EDIT_ONE_LANDING = "/editlanding-";
 
     public static final String STAT_ONE_LANDING = "/statlanding-";
+
+    public static final String EXPORT_ONE_LANDING = "/exportlanding-";
 
     public static final String EDIT_ONE_PARAM = "/editparam-";
 

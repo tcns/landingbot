@@ -5,17 +5,17 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 
 /**
  * Created by tignatchenko on 23/04/17.
  */
 @Entity
-public class ChatState {
-    @GenericGenerator(name = "generator", strategy = "foreign",
-                      parameters = @Parameter(name = "property", value = "chatUser"))
+public class ChatState implements Serializable {
+
     @Id
-    @GeneratedValue(generator = "generator")
+    @GeneratedValue
     private Long id;
 
     @Column

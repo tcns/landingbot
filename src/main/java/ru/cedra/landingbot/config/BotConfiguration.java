@@ -30,14 +30,13 @@ public class BotConfiguration {
 
     Cloudinary cloudinary = new Cloudinary();
 
-    VelocityEngine velocityEngine;
+    VelocityEngine velocityEngine = new VelocityEngine();
 
     @PostConstruct
     public void init() throws TelegramApiRequestException {
         cloudinary.config.apiKey = applicationProperties.getCloudinaryApiKey();
         cloudinary.config.cloudName = applicationProperties.getCloudinaryCloudName();
         cloudinary.config.apiSecret = applicationProperties.getCloudinaryApiSecret();
-        velocityEngine = new VelocityEngine();
         Properties props = new Properties();
         props.put(RuntimeConstants.RESOURCE_LOADER, "classpath");
         props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());

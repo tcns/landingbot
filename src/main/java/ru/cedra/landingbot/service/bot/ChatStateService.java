@@ -49,8 +49,8 @@ public class ChatStateService {
     public Integer getCurrentStep(Long chatId) {
         ChatState
             chatState = chatStateRepository.findOneByChatUser_TelegramChatId(chatId);
-        if (chatState==null) {
-            return null;
+        if (chatState == null) {
+            return 0;
         }
         return chatState.getStep();
 

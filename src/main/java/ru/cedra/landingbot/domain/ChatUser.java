@@ -3,6 +3,7 @@ package ru.cedra.landingbot.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,10 +12,9 @@ import java.util.Set;
  * Created by tignatchenko on 25/04/17.
  */
 @Entity
-public class ChatUser {
+public class ChatUser implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue
     private Long id;
 
     @Column

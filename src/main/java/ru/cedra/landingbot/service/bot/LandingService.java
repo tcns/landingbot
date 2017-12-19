@@ -16,6 +16,7 @@ import ru.cedra.landingbot.domain.Commands;
 import ru.cedra.landingbot.domain.MainPage;
 import ru.cedra.landingbot.repository.MainPageRepository;
 import ru.cedra.landingbot.service.ChatUserService;
+import ru.cedra.landingbot.service.template.RenderService;
 
 import java.io.IOException;
 import java.util.*;
@@ -41,6 +42,9 @@ public class LandingService {
 
     @Autowired
     ApplicationProperties applicationProperties;
+
+    @Autowired
+    RenderService renderService;
 
     public SendMessage initConversation (Long chatId) {
 
@@ -79,8 +83,13 @@ public class LandingService {
         String input = message.getText();
         ChatState chatState = chatStateService.getCurrentChatState(chatId);
         int chatStep = chatState.getStep();
-        if (ChatSteps.photoSteps.contains(chatStep)) {
-            input = handlePhoto(message, landingBot);
+        if (ChatSteps.photoSteps.contains(chatStep) && input == null) {
+            try {
+                input = handlePhoto(message, landingBot);
+            } catch (Exception ex) {
+                input = "N";
+            }
+
         }
 
         SendMessage sendMessage;
@@ -116,6 +125,11 @@ public class LandingService {
             chatStateService.updateChatStep(0, chatId);
             sendMessage = new SendMessage().setText(ChatSteps.states.get(ChatSteps.FINAL_STEP))
                 .setChatId(chatId);
+            try {
+                renderService.renderMain(page);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (Commands.EDIT_ONE_PARAM_FINAL.equals(editType)) {
                 sendMessage.setText("Значение успешно обновлено!");
             }
@@ -131,7 +145,23 @@ public class LandingService {
 
 
     }
+    public SendMessage getLandingList(Long chatId, String command) {
+        Set<MainPage> pages = mainPageRepository.findByChatUser_TelegramChatId(chatId);
+        InlineKeyboardMarkup replyMarkup = new InlineKeyboardMarkup();
+        final List<List<InlineKeyboardButton>> keyboardButtons = new ArrayList<>(pages.size());
 
+        pages.stream().forEach((page) -> {
+            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+            inlineKeyboardButton.setText(page.getName()==null?"Не указано":page.getName());
+            inlineKeyboardButton.setCallbackData(command+page.getId());
+            keyboardButtons.add(Collections.singletonList(inlineKeyboardButton));
+        });
+
+        replyMarkup.setKeyboard(keyboardButtons);
+        return new SendMessage().setText("список отчетов")
+            .setChatId(chatId)
+            .setReplyMarkup(replyMarkup);
+    }
 
 
 
@@ -149,11 +179,18 @@ public class LandingService {
             return sendMessage;
     }
 
-    public SendMessage downloadPageNow (Long chatId, Long metricId) {
-        MainPage mainPage = mainPageRepository.findOne(metricId);
+    public SendMessage downloadPageNow (Long chatId, Long pageId) {
+        MainPage mainPage = mainPageRepository.findOne(pageId);
         SendMessage sendMessage = new SendMessage()
             .setChatId(chatId)
             .setText(mainPage.toString());
+        try {
+            renderService.renderMain(mainPage);
+            return sendMessage;
+        } catch (IOException e) {
+            sendMessage.setText("Не получилось сохранить страницу");
+        }
+
         return sendMessage;
     }
 
@@ -195,10 +232,10 @@ public class LandingService {
         return mainPageRepository.findAll();
     }
 
-    public SendMessage editMetric (Long chatId, Long metricId) {
+    public SendMessage editLanding (Long chatId, Long metricId) {
         return new SendMessage()
             .setChatId(chatId)
-            .setText("Редактирование метрики")
+            .setText("Редактирование лендинга")
             .setReplyMarkup(getFieldKeyBoard(metricId));
     }
 

@@ -23,7 +23,7 @@ spring:
         type: none
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:h2:mem:landingbot;DB_CLOSE_DELAY=-1
+        url: jdbc:h2:mem:landingbot1;DB_CLOSE_DELAY=-1
         name:
         username:
         password:
@@ -111,3 +111,10 @@ jhipster:
 # ===================================================================
 
 application:
+    bot-token: 494951183:AAG-Dm1taB9Lk0gFzndo8ee1YdZdcXTvwrA
+    bot-username: landing_generator_bot
+    cloudinary-cloud-name: cedralandingbot2000
+    cloudinary-api-key: 946149898338197
+    cloudinary-api-secret: 0ZKV3rpFSuc6D2YSNU01SHweLNE
+    cloudinary-api-url: https://api.cloudinary.com/v1_1/cedralandingbot2000
+    template-path: assets/

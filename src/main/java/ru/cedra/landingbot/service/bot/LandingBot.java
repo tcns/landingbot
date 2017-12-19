@@ -54,8 +54,11 @@ public class LandingBot extends TelegramLongPollingBot {
             } else if (callbackData.startsWith(Commands.DELETE_ONE_LANDING)) {
                 message = landingService.deletePage(chatId,
                                                             Long.parseLong(callbackData.substring(Commands.DELETE_ONE_LANDING.length())));
+            } else if (callbackData.startsWith(Commands.EXPORT_ONE_LANDING)) {
+                message = landingService.downloadPageNow(chatId,
+                    Long.parseLong(callbackData.substring(Commands.EXPORT_ONE_LANDING.length())));
             } else if (callbackData.startsWith(Commands.EDIT_ONE_LANDING)) {
-                message = landingService.editMetric(chatId,
+                message = landingService.editLanding(chatId,
                                                      Long.parseLong(callbackData.substring(Commands.EDIT_ONE_LANDING.length())));
             } else if (callbackData.startsWith(Commands.EDIT_ONE_PARAM)) {
                 String signature = callbackData.substring(Commands.EDIT_ONE_PARAM.length());
@@ -87,12 +90,29 @@ public class LandingBot extends TelegramLongPollingBot {
                     chatStateService.updateChatStep(0, chatId);
                     message = landingService.initConversation(update.getMessage().getChatId());
                     break;
+                case Commands.LANDING_LIST:
+                    chatStateService.updateChatStep(0, chatId);
+                    message = landingService.getLandingList(chatId, Commands.GET_LANDING);
+                    break;
+                case Commands.DELETE_LANDING:
+                    chatStateService.updateChatStep(0, chatId);
+                    message = landingService.getLandingList(chatId, Commands.DELETE_ONE_LANDING);
+                    break;
+                case Commands.EDIT_LANDING:
+                    chatStateService.updateChatStep(0, chatId);
+                    message = landingService.getLandingList(chatId, Commands.EDIT_ONE_LANDING);
+                    break;
+                case Commands.LANDING_EXPORT:
+                    chatStateService.updateChatStep(0, chatId);
+                    message = landingService.getLandingList(chatId, Commands.EXPORT_ONE_LANDING);
+                    break;
                 case Commands.MAIN:
                     chatStateService.updateChatStep(0, chatId);
                     message = getMainMenu(chatId);
                     break;
+
                 default:
-                    int chatStep = chatStateService.getCurrentStep(chatId);
+                    Integer chatStep = chatStateService.getCurrentStep(chatId);
                     switch (chatStep) {
                         case 0: message = getDefaultMessage(chatId);
                             break;
@@ -136,6 +156,7 @@ public class LandingBot extends TelegramLongPollingBot {
                                                    .setText(Commands.ADD_LANDING + " добавить лендинг\n" +
                                                                 Commands.DELETE_LANDING + " удалить лендинг\n" +
                                                                 Commands.LANDING_LIST + " список лендингов\n" +
+                                                                Commands.LANDING_EXPORT + " экспорт лендинга\n" +
                                                                 Commands.EDIT_LANDING + " редактировать\n" +
                                                                 Commands.MAIN + " главное меню\n" +
                                                                 Commands.START + " редактировать");

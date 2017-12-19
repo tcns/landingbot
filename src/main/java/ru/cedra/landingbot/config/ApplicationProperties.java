@@ -18,6 +18,7 @@ public class ApplicationProperties {
     private String cloudinaryApiSecret;
     private String cloudinaryApiUrl;
     private String templatePath;
+    private String exportPath;
 
     public String getBotToken() {
         return botToken;
@@ -73,5 +74,13 @@ public class ApplicationProperties {
 
     public void setTemplatePath(String templatePath) {
         this.templatePath = templatePath;
+    }
+
+    public String getExportPath() {
+        return exportPath;
+    }
+
+    public void setExportPath(String exportPath) {
+        this.exportPath = exportPath;
     }
 }
