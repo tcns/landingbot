@@ -1,13 +1,13 @@
 package ru.cedra.landingbot.service.bot;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.cedra.landingbot.config.ApplicationProperties;
-import ru.cedra.landingbot.domain.ChatSteps;
 import ru.cedra.landingbot.domain.ChatUser;
 import ru.cedra.landingbot.domain.Commands;
 import ru.cedra.landingbot.service.ChatUserService;
@@ -17,7 +17,7 @@ import ru.cedra.landingbot.service.UserService;
 /**
  * Created by tignatchenko on 22/04/17.
  */
-@Service
+@Component
 public class LandingBot extends TelegramLongPollingBot {
     @Autowired
     ApplicationProperties applicationProperties;
@@ -30,13 +30,10 @@ public class LandingBot extends TelegramLongPollingBot {
     @Autowired
     ChatStateService chatStateService;
 
-    public ApplicationProperties getApplicationProperties() {
-        return applicationProperties;
-    }
 
     public void sendMessageExternal (SendMessage sendMessage) {
         try {
-            sendMessage(sendMessage);
+            execute(sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -67,7 +64,7 @@ public class LandingBot extends TelegramLongPollingBot {
             }
 
             try {
-                sendMessage(message);
+                execute(message);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
@@ -124,7 +121,7 @@ public class LandingBot extends TelegramLongPollingBot {
             }
 
             try {
-                sendMessage(message);
+                execute(message);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }

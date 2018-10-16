@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,9 +49,10 @@ public class RenderService {
             "/"+page.getChatUser().getTelegramChatId()+"/"+page.getId());
         String directory = dirPath.toAbsolutePath().toString();
         if (!Files.exists(Paths.get(directory+"/"+"index.html"))) {
-            FileUtils.copyDirectory(DirectoryUtil.getResource(applicationProperties.getTemplatePath()),
-                dirPath.toFile());
+            FileUtils.deleteDirectory(DirectoryUtil.getResource(applicationProperties.getTemplatePath()));
         }
+        FileUtils.copyDirectory(DirectoryUtil.getResource(applicationProperties.getTemplatePath()),
+            dirPath.toFile());
         File file = new File(directory + "/" +
             "index.html");
         String path = file.getAbsolutePath();
@@ -65,7 +67,8 @@ public class RenderService {
         URI outputFile = new File(directory + "/css/main.css").toURI();
         try {
             Output output = compiler.compileFile(inputFile, outputFile, new Options());
-
+            FileUtils.forceDelete(new File(directory + "/css/main.min.css"));
+            FileUtils.writeStringToFile(new File(directory + "/css/main.min.css"), output.getCss(), Charset.forName("UTF-8"));
             logger.info("Compiled successfully");
         } catch (CompilationException e) {
             logger.log(Level.SEVERE, "Compile failed");

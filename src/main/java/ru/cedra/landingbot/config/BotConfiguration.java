@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import ru.cedra.landingbot.service.bot.LandingBot;
 
 import javax.annotation.PostConstruct;
@@ -41,8 +41,6 @@ public class BotConfiguration {
         props.put(RuntimeConstants.RESOURCE_LOADER, "classpath");
         props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         velocityEngine.init(props);
-        TelegramBotsApi botsApi = new TelegramBotsApi();
-        botsApi.registerBot(landingBot);
     }
 
     @Bean

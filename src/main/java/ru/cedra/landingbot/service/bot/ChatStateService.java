@@ -2,7 +2,7 @@ package ru.cedra.landingbot.service.bot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.cedra.landingbot.domain.ChatState;
 import ru.cedra.landingbot.domain.ChatSteps;
 import ru.cedra.landingbot.repository.ChatStateRepository;

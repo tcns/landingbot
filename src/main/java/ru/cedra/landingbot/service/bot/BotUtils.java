@@ -1,12 +1,10 @@
 package ru.cedra.landingbot.service.bot;
 
-import org.telegram.telegrambots.api.methods.GetFile;
-import org.telegram.telegrambots.api.objects.File;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.PhotoSize;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.objects.File;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -37,14 +35,11 @@ public class BotUtils {
 
         if (photo.hasFilePath()) { // If the file_path is already present, we are done!
             return photo.getFilePath();
-        } else { // If not, let find it
-            // We create a GetFile method and set the file_id from the photo
+        } else {
             GetFile getFileMethod = new GetFile();
             getFileMethod.setFileId(photo.getFileId());
             try {
-                // We execute the method using AbsSender::execute method.
-                File file = bot.getFile(getFileMethod);
-                // We now have the file_path
+                File file = bot.execute(getFileMethod);
                 return file.getFilePath();
             } catch (TelegramApiException e) {
                 e.printStackTrace();

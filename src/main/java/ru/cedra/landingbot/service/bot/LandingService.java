@@ -4,11 +4,11 @@ import com.cloudinary.Cloudinary;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.PhotoSize;
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import ru.cedra.landingbot.config.ApplicationProperties;
 import ru.cedra.landingbot.domain.ChatState;
 import ru.cedra.landingbot.domain.ChatSteps;
@@ -69,7 +69,7 @@ public class LandingService {
     private String handlePhoto(Message message, LandingBot landingBot) {
         PhotoSize fileSize = BotUtils.getPhoto(message);
         String filePath = BotUtils.getFilePath(fileSize, landingBot);
-        String fullPath = org.telegram.telegrambots.api.objects.File.getFileUrl(applicationProperties.getBotToken(), filePath);
+        String fullPath = org.telegram.telegrambots.meta.api.objects.File.getFileUrl(applicationProperties.getBotToken(), filePath);
         try {
             Map fileConfig = cloudinary.uploader().upload(fullPath, new HashMap());
             return (String) fileConfig.get("url");
