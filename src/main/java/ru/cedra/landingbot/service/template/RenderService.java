@@ -4,6 +4,9 @@ import io.bit3.jsass.CompilationException;
 import io.bit3.jsass.Compiler;
 import io.bit3.jsass.Options;
 import io.bit3.jsass.Output;
+import me.postaddict.instagram.scraper.Instagram;
+import me.postaddict.instagram.scraper.model.Account;
+import okhttp3.OkHttpClient;
 import org.apache.commons.io.FileUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cedra.landingbot.config.ApplicationProperties;
 import ru.cedra.landingbot.domain.MainPage;
+import ru.cedra.landingbot.service.ScraperService;
 import ru.cedra.landingbot.service.util.DirectoryUtil;
 
 import java.io.BufferedWriter;
@@ -37,12 +41,16 @@ public class RenderService {
     VelocityEngine engine;
     @Autowired
     ApplicationProperties applicationProperties;
+    @Autowired
+    ScraperService scraperService;
 
     public  void renderMain (MainPage page) throws IOException {
         Template template = engine.getTemplate(applicationProperties.getTemplatePath() + "/index-template.html", "UTF-8");
 
         VelocityContext velocityContext = new VelocityContext();
 
+
+        page.setGallery(scraperService.extractInstagramGallery(page.getInstagram(), 16));
         velocityContext.put("page", page);
 
         Path dirPath = DirectoryUtil.createAndGet(applicationProperties.getExportPath()+

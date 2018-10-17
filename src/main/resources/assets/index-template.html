@@ -80,9 +80,10 @@
 					<h1 class="h1_title text-center">${page.title}</h1>
 					<div class="subtitle text-center">${page.secondTitle}</div>
 				</div>
-				<div class="row ">
-					<div class=" col-md-3 col-xs-6 col-sm-4">
-						<div class="type-img"><img src="img/catalog/1.jpg" alt="" class="img-responsive"></div>
+				<div class="row">
+                    #foreach( $media in $gallery)
+					<div class="col-md-3 col-xs-6 col-sm-4">
+						<div class="type-img"><img src='${media}' alt="" class="img-responsive"></div>
 						<div class="type-wrap">
 							<div class="type-desc">Стеклянный бокс на 9 роз(3х3)</div>
 							<ul class="type-list">
@@ -90,9 +91,9 @@
 							</ul>
 							<div class="type-desc">990 руб.</div>
 							<div class="fullwidth_btn type1_btn btn popup_btn" onclick="popup('calc9')">Заказать</div>
-
 						</div>
 					</div>
+                    #end
 				</div>
 				<div class="row">
 					<div class="col-md-offset-4 col-sm-offset-3 col-md-4 col-sm-6 col-xs-12">
