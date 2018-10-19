@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import ru.cedra.landingbot.domain.dto.InstagramData;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ public class ScraperService {
 
     @Autowired
     RestTemplate restTemplate;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     protected static final String GROUP_NAME = "json";
     private static final Pattern JSON_PATTERN = Pattern.compile(
@@ -53,8 +57,19 @@ public class ScraperService {
 
         String val = getFieldValueFromPage(pageContent, JSON_PATTERN);
         HashMap<String,Object> result =
-            new ObjectMapper().readValue(val, HashMap.class);
-        return new ArrayList<>();
+            objectMapper.readValue(val, HashMap.class);
+        InstagramData object =
+            objectMapper.readValue(val, InstagramData.class);
+        List<String> response = object.getEntryData().getProfilePage().get(0)
+            .getGraphQl()
+            .getUser()
+            .getTimeLineMediaList()
+            .getNodes()
+            .stream()
+            .map(a->a.getNode().getDisplayUrl())
+            .limit(count)
+            .collect(Collectors.toList());
+        return response;
 
     }
 

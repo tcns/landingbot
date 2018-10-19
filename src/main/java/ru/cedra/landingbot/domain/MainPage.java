@@ -1,6 +1,7 @@
 package ru.cedra.landingbot.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import ru.cedra.landingbot.anno.Cast;
@@ -104,6 +105,7 @@ public class MainPage implements Serializable {
     private ChatUser chatUser;
 
     @Transient
+    @JsonInclude
     private List<String> gallery;
 
     @Override

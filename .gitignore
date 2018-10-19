@@ -23,7 +23,11 @@ npm-debug.log.*
 *.pydevproject
 .project
 .metadata
+sites/
 tmp/
+gradle
+gradlew
+gradlew.bat
 tmp/**/*
 *.tmp
 *.bak
