@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
@@ -18,6 +19,7 @@ import ru.cedra.landingbot.repository.MainPageRepository;
 import ru.cedra.landingbot.service.ChatUserService;
 import ru.cedra.landingbot.service.template.RenderService;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -179,19 +181,25 @@ public class LandingService {
             return sendMessage;
     }
 
-    public SendMessage downloadPageNow (Long chatId, Long pageId) {
+    public SendDocument downloadPageNow (Long chatId, Long pageId) {
         MainPage mainPage = mainPageRepository.findOne(pageId);
-        SendMessage sendMessage = new SendMessage()
+        SendDocument sendDocument = new SendDocument()
             .setChatId(chatId)
-            .setText(mainPage.toString());
+            .setCaption(mainPage.getName() + " экспортирован");
         try {
-            renderService.renderMain(mainPage);
-            return sendMessage;
+            File file = renderService.renderMain(mainPage);
+            if (file != null) {
+                sendDocument.setDocument(file);
+                return sendDocument;
+            } else {
+                throw new IOException();
+            }
+
         } catch (IOException e) {
-            sendMessage.setText("Не получилось сохранить страницу");
+            sendDocument.setCaption("Не получилось сохранить страницу");
         }
 
-        return sendMessage;
+        return sendDocument;
     }
 
 

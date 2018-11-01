@@ -3,6 +3,7 @@ package ru.cedra.landingbot.service.bot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -43,8 +44,8 @@ public class LandingBot extends TelegramLongPollingBot {
         if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
             Long chatId = update.getCallbackQuery().getMessage().getChatId();
-            int chatStep = chatStateService.getCurrentStep(chatId);
-            SendMessage message = new SendMessage();
+            SendMessage message = null;
+            SendDocument documentMessage = null;
             if (callbackData.startsWith(Commands.GET_LANDING)) {
                 message = landingService.getPageDefinition(chatId,
                                                             Long.parseLong(callbackData.substring(Commands.GET_LANDING.length())));
@@ -52,7 +53,12 @@ public class LandingBot extends TelegramLongPollingBot {
                 message = landingService.deletePage(chatId,
                                                             Long.parseLong(callbackData.substring(Commands.DELETE_ONE_LANDING.length())));
             } else if (callbackData.startsWith(Commands.EXPORT_ONE_LANDING)) {
-                message = landingService.downloadPageNow(chatId,
+                try {
+                    execute(getWaitMessage(chatId));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                documentMessage = landingService.downloadPageNow(chatId,
                     Long.parseLong(callbackData.substring(Commands.EXPORT_ONE_LANDING.length())));
             } else if (callbackData.startsWith(Commands.EDIT_ONE_LANDING)) {
                 message = landingService.editLanding(chatId,
@@ -64,7 +70,12 @@ public class LandingBot extends TelegramLongPollingBot {
             }
 
             try {
-                execute(message);
+                if (message!= null) {
+                    execute(message);
+                } else {
+                    execute(documentMessage);
+                }
+
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
@@ -146,6 +157,12 @@ public class LandingBot extends TelegramLongPollingBot {
             .setText("Введите команду");
         return sendMessage;
     }
+    public SendMessage getWaitMessage(Long chatId) {
+        SendMessage sendMessage = new SendMessage().
+            setChatId(chatId)
+            .setText("Подождите пожалуйста...");
+        return sendMessage;
+    }
 
     public SendMessage getMainMenu(Long chatId) {
         SendMessage sendMessage = new SendMessage().
@@ -154,9 +171,7 @@ public class LandingBot extends TelegramLongPollingBot {
                                                                 Commands.DELETE_LANDING + " удалить лендинг\n" +
                                                                 Commands.LANDING_LIST + " список лендингов\n" +
                                                                 Commands.LANDING_EXPORT + " экспорт лендинга\n" +
-                                                                Commands.EDIT_LANDING + " редактировать\n" +
-                                                                Commands.MAIN + " главное меню\n" +
-                                                                Commands.START + " редактировать");
+                                                                Commands.EDIT_LANDING + " редактировать");
         return sendMessage;
     }
 

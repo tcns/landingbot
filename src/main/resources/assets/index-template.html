@@ -110,7 +110,7 @@
 				<div class="row ">
 					<div class=" col-md-10 col-md-offset-1 col-xs-12 col-sm-12">
 						<div class="goriz-form-wrap1">
-							<p>Оставьте заявку, наш менеджер свяжется с вами и уточнит все детали заказа.</p>
+							<p>${page.formTitle}</p>
 							<form action="" method="post" class="goriz-form clearfix">
 								<div class="goriz-input-wrap input-wrap">
 									<input class="name" type="text" name="name" plSaceholder="Ваше имя">
@@ -125,7 +125,7 @@
 								<input type="hidden" name="term" class="term" value="">
 								<input type="hidden" name="formtype" class="formtype" value="Сформировать индивидуальный заказ">
 
-								<input type="submit" class="btn goriz-form-btn" value="Оставить заявку">
+								<input type="submit" class="btn goriz-form-btn" value="${page.formButtonText}">
 							</form>
 						</div>
 					</div>
@@ -152,23 +152,12 @@
 				<div class="gallery_inner">
 					<div class="gallery">
 						<div class="row">
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/1.jpg" title="Акриловые боксы от производителя"><img src="img/photos/1.jpg" alt="" class="img-responsive"></a></div>
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/2.jpg" title="Акриловые боксы оптом в СПБ"><img src="img/photos/2.jpg" alt="" class="img-responsive"></a></div>
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/3.jpg" title="Акриловые боксы оптом в Москве"><img src="img/photos/3.jpg" alt="" class="img-responsive"></a></div>
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/4.jpg" title="Акриловые боксы для цветов оптом"><img src="img/photos/4.jpg" alt="" class="img-responsive"></a></div>
-						</div>
-						<div class="row">
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/5.jpg" title="Акриловые коробки от производителя"><img src="img/photos/5.jpg" alt="" class="img-responsive"></a></div>
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/7.jpg" title="Акриловые коробки оптом в Москве"><img src="img/photos/7.jpg" alt="" class="img-responsive"></a></div>
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/8.jpg" title="Акриловые коробки оптом в СПБ"><img src="img/photos/8.jpg" alt="" class="img-responsive"></a></div>
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/10.jpg" title="Акриловые коробки для цветов оптом"><img src="img/photos/10.jpg" alt="" class="img-responsive"></a></div>
-
-						</div>
-						<div class="row">
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/11.jpg" title="Стеклянные коробки от производителя"><img src="img/photos/11.jpg" alt="" class="img-responsive"></a></div>
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/12.jpg" title="Стеклянные коробки оптом в Москве"><img src="img/photos/12.jpg" alt="" class="img-responsive"></a></div>
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/13.jpg" title="Стеклянные коробки оптом в СПБ"><img src="img/photos/13.jpg" alt="" class="img-responsive"></a></div>
-							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img"><a href="img/photos/14.jpg" title="Стеклянные коробки для цветов оптом"><img src="img/photos/14.jpg" alt="" class="img-responsive"></a></div>
+                            #foreach( $media in $page.gallery )
+							<div class="col-md-3 col-sm-6 col-xs-6 gallery-img">
+                                <a href="${media}" title="Акриловые боксы от производителя">
+                                    <img src="${media}" alt="" class="img-responsive"></a>
+                            </div>
+                            #end
 						</div>
 
 					</div>

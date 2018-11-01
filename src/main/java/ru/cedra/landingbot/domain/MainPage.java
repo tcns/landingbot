@@ -81,8 +81,7 @@ public class MainPage implements Serializable {
 
     @Column
     @Step(ChatSteps.FORM_BUTTON_TEXT_STEP)
-    @Cast(CastMethod.BOOLEAN)
-    private boolean formButtonText;
+    private String formButtonText;
 
     @Column
     @Step(ChatSteps.ADDRESS_STEP)
@@ -110,27 +109,25 @@ public class MainPage implements Serializable {
 
     @Override
     public String toString() {
-        return "MainPage{" +
-            "name='" + name + '\'' +
-            ", logo='" + logo + '\'' +
-            ", color='" + color + '\'' +
-            ", desc='" + desc + '\'' +
-            ", keywordDesc='" + keywordDesc + '\'' +
-            ", title='" + title + '\'' +
-            ", secondTitle='" + secondTitle + '\'' +
-            ", phone='" + phone + '\'' +
-            ", vk='" + vk + '\'' +
-            ", instagram='" + instagram + '\'' +
-            ", formTitle='" + formTitle + '\'' +
-            ", hasFormClientName=" + hasFormClientName +
-            ", hasFormClientEmail=" + hasFormClientEmail +
-            ", hasFormClientPhone=" + hasFormClientPhone +
-            ", formButtonText=" + formButtonText +
-            ", address='" + address + '\'' +
-            ", yaCounterName='" + yaCounterName + '\'' +
-            ", gaCounterName='" + gaCounterName + '\'' +
-            ", pic='" + pic + '\'' +
-            ", chatUser=" + chatUser +
-            '}';
+        return
+            "Название: " + name + '\n' +
+            "Логотип: " + logo + '\n' +
+            "Цвет: " + color + '\n' +
+            "Описание: " + desc + '\n' +
+            "Ключевые слова: " + keywordDesc + '\n' +
+            "Основной заголовк: " + title + '\n' +
+            "Второй заголовок: " + secondTitle + '\n' +
+            "Телефон: " + phone + '\n' +
+            "Вк: " + vk + '\n' +
+            "Инстаграм: " + instagram + '\n' +
+            "Заголовок формы: " + formTitle + '\n' +
+            "Добавлять имя на форму: " + hasFormClientName + '\n' +
+            "Добавлять почту на форму: " + hasFormClientEmail + '\n' +
+            "Добавлять телефон на форму: " + hasFormClientPhone + '\n' +
+            "Текст на кнопке формы: " + formButtonText + '\n' +
+            "Адрес: " + address + '\n' +
+            "Имя яндекс счетчика: " + yaCounterName + '\n' +
+            "Имя ga счетчика: " + gaCounterName + '\n' +
+            "Основной баннер: " + pic;
     }
 }

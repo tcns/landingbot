@@ -13,6 +13,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.zeroturnaround.zip.ZipUtil;
 import ru.cedra.landingbot.config.ApplicationProperties;
 import ru.cedra.landingbot.domain.MainPage;
 import ru.cedra.landingbot.service.ScraperService;
@@ -44,7 +45,7 @@ public class RenderService {
     @Autowired
     ScraperService scraperService;
 
-    public  void renderMain (MainPage page) throws IOException {
+    public  File renderMain (MainPage page) throws IOException {
         Template template = engine.getTemplate(applicationProperties.getTemplatePath() + "/index-template.html", "UTF-8");
 
         VelocityContext velocityContext = new VelocityContext();
@@ -77,9 +78,13 @@ public class RenderService {
             Output output = compiler.compileFile(inputFile, outputFile, new Options());
             FileUtils.forceDelete(new File(directory + "/css/main.min.css"));
             FileUtils.writeStringToFile(new File(directory + "/css/main.min.css"), output.getCss(), Charset.forName("UTF-8"));
+            File response = new File(directory + "/site.zip");
+            ZipUtil.pack(new File(directory), response);
             logger.info("Compiled successfully");
+            return response;
         } catch (CompilationException e) {
             logger.log(Level.SEVERE, "Compile failed");
         }
+        return null;
     }
 }
