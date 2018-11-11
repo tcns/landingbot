@@ -1,6 +1,7 @@
 package ru.cedra.landingbot.web.rest;
 
 import io.github.jhipster.config.JHipsterProperties;
+import org.junit.Ignore;
 import ru.cedra.landingbot.LandingbotApp;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  **/
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LandingbotApp.class)
+@Ignore
 public class ProfileInfoResourceIntTest {
 
     @Mock

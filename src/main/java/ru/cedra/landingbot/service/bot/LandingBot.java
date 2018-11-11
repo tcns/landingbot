@@ -5,8 +5,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.cedra.landingbot.config.ApplicationProperties;
 import ru.cedra.landingbot.domain.ChatUser;
@@ -46,61 +49,18 @@ public class LandingBot extends TelegramLongPollingBot {
             Long chatId = update.getCallbackQuery().getMessage().getChatId();
             SendMessage message = null;
             SendDocument documentMessage = null;
-            if (callbackData.startsWith(Commands.GET_LANDING)) {
-                message = landingService.getPageDefinition(chatId,
-                                                            Long.parseLong(callbackData.substring(Commands.GET_LANDING.length())));
-            } else if (callbackData.startsWith(Commands.DELETE_ONE_LANDING)) {
-                message = landingService.deletePage(chatId,
-                                                            Long.parseLong(callbackData.substring(Commands.DELETE_ONE_LANDING.length())));
-            } else if (callbackData.startsWith(Commands.EXPORT_ONE_LANDING)) {
-                try {
-                    execute(getWaitMessage(chatId));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
-                documentMessage = landingService.downloadPageNow(chatId,
-                    Long.parseLong(callbackData.substring(Commands.EXPORT_ONE_LANDING.length())));
-            } else if (callbackData.startsWith(Commands.EDIT_ONE_LANDING)) {
-                message = landingService.editLanding(chatId,
-                                                     Long.parseLong(callbackData.substring(Commands.EDIT_ONE_LANDING.length())));
-            } else if (callbackData.startsWith(Commands.EDIT_ONE_PARAM)) {
-                String signature = callbackData.substring(Commands.EDIT_ONE_PARAM.length());
-                String[] kv = signature.split("-");
-                message = landingService.initEdition(chatId, Integer.parseInt(kv[1]), kv[0]);
-            }
-
-            try {
-                if (message!= null) {
-                    execute(message);
-                } else {
-                    execute(documentMessage);
-                }
-
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        } else if (update.hasMessage()) {
-            Long chatId = update.getMessage().getChatId();
-
-            SendMessage message = new SendMessage();
-            String input = update.getMessage().getText();
-            if (input == null) {
-                input = "";
-            }
-            if (chatUserService.getChatUser(chatId) == null) {
-                input = Commands.START;
-            }
-            switch (input.toLowerCase()) {
-                case Commands.START:
-                    ChatUser chatUser = chatUserService.createOrReturnChatUser(chatId);
-                    break;
+            switch (callbackData.toLowerCase()) {
                 case Commands.ADD_LANDING:
                     chatStateService.updateChatStep(0, chatId);
-                    message = landingService.initConversation(update.getMessage().getChatId());
+                    message = landingService.initConversation(chatId);
                     break;
                 case Commands.LANDING_LIST:
                     chatStateService.updateChatStep(0, chatId);
                     message = landingService.getLandingList(chatId, Commands.GET_LANDING);
+                    break;
+                case Commands.LANDING_CONTINUE:
+                    chatStateService.updateChatStep(0, chatId);
+                    message = landingService.getLandingList(chatId, Commands.CONTINUE_ONE_LANDING, true);
                     break;
                 case Commands.DELETE_LANDING:
                     chatStateService.updateChatStep(0, chatId);
@@ -120,6 +80,69 @@ public class LandingBot extends TelegramLongPollingBot {
                     break;
 
                 default:
+                    if (callbackData.startsWith(Commands.GET_LANDING)) {
+                        message = landingService.getPageDefinition(chatId,
+                            Long.parseLong(callbackData.substring(Commands.GET_LANDING.length())));
+                    } else if (callbackData.startsWith(Commands.CONTINUE_ONE_LANDING)) {
+                        message = landingService.initConversation(chatId,
+                            Long.parseLong(callbackData.substring(Commands.CONTINUE_ONE_LANDING.length())));
+                    } else if (callbackData.startsWith(Commands.DELETE_ONE_LANDING)) {
+                        message = landingService.deletePage(chatId,
+                            Long.parseLong(callbackData.substring(Commands.DELETE_ONE_LANDING.length())));
+                    } else if (callbackData.startsWith(Commands.EXPORT_ONE_LANDING)) {
+                        try {
+                            execute(getWaitMessage(chatId));
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+                        documentMessage = landingService.downloadPageNow(chatId,
+                            Long.parseLong(callbackData.substring(Commands.EXPORT_ONE_LANDING.length())));
+                    } else if (callbackData.startsWith(Commands.EDIT_ONE_LANDING)) {
+                        message = landingService.editLanding(chatId,
+                            Long.parseLong(callbackData.substring(Commands.EDIT_ONE_LANDING.length())));
+                    } else if (callbackData.startsWith(Commands.EDIT_ONE_PARAM)) {
+                        String signature = callbackData.substring(Commands.EDIT_ONE_PARAM.length());
+                        String[] kv = signature.split("-");
+                        message = landingService.initEdition(chatId, Integer.parseInt(kv[1]), kv[0]);
+                    }
+
+                    break;
+            }
+
+
+            try {
+                if (message!= null) {
+                    sendMessage(message);
+                } else {
+                    execute(documentMessage);
+                }
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+
+        } else if (update.hasMessage()) {
+            Long chatId = update.getMessage().getChatId();
+
+            SendMessage message;
+            String input = update.getMessage().getText();
+            if (input == null) {
+                input = "";
+            }
+            if (chatUserService.getChatUser(chatId) == null) {
+                input = Commands.START;
+            }
+            switch (input.toLowerCase()) {
+                case Commands.START:
+                    chatUserService.createOrReturnChatUser(chatId);
+                    chatStateService.updateChatStep(0, chatId);
+                    message = getMainMenu(chatId);
+                    break;
+                case Commands.MAIN:
+                    chatStateService.updateChatStep(0, chatId);
+                    message = getMainMenu(chatId);
+                    break;
+
+                default:
                     Integer chatStep = chatStateService.getCurrentStep(chatId);
                     switch (chatStep) {
                         case 0: message = getDefaultMessage(chatId);
@@ -131,14 +154,24 @@ public class LandingBot extends TelegramLongPollingBot {
                     break;
             }
 
-            try {
-                execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
+            sendMessage(message);
         }
     }
 
+    public void sendMessage (SendMessage message) {
+
+        addMainButton(message);
+        try {
+            Message execute = execute(message);
+            int  id = chatStateService.saveMessageIdGetPrevious(execute.getChatId(), execute.getMessageId());
+            DeleteMessage deleteMessage = new DeleteMessage()
+                .setChatId(execute.getChatId())
+                .setMessageId(id);
+            execute (deleteMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public String getBotUsername() {
         return applicationProperties.getBotUsername();
@@ -165,14 +198,19 @@ public class LandingBot extends TelegramLongPollingBot {
     }
 
     public SendMessage getMainMenu(Long chatId) {
-        SendMessage sendMessage = new SendMessage().
-                                                       setChatId(chatId)
-                                                   .setText(Commands.ADD_LANDING + " добавить лендинг\n" +
-                                                                Commands.DELETE_LANDING + " удалить лендинг\n" +
-                                                                Commands.LANDING_LIST + " список лендингов\n" +
-                                                                Commands.LANDING_EXPORT + " экспорт лендинга\n" +
-                                                                Commands.EDIT_LANDING + " редактировать");
+        SendMessage sendMessage = landingService.getMainMenu(chatId);
         return sendMessage;
+    }
+
+    public void addMainButton(SendMessage sendMessage) {
+        if (sendMessage.getReplyMarkup()!= null &&
+            sendMessage.getReplyMarkup() instanceof InlineKeyboardMarkup) {
+            ((InlineKeyboardMarkup)sendMessage.getReplyMarkup())
+                .getKeyboard().add(landingService.getMainMenuButton().getKeyboard().get(0));
+        } else {
+            sendMessage.setReplyMarkup(landingService.getMainMenuButton());
+        }
+
     }
 
 }

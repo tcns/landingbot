@@ -1,4 +1,5 @@
 package ru.cedra.landingbot.service;
+import org.junit.Ignore;
 import ru.cedra.landingbot.config.Constants;
 
 import ru.cedra.landingbot.LandingbotApp;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LandingbotApp.class)
+@Ignore
 public class MailServiceIntTest {
 
     @Autowired

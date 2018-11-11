@@ -1,5 +1,6 @@
 package ru.cedra.landingbot.web.rest;
 
+import org.junit.Ignore;
 import ru.cedra.landingbot.LandingbotApp;
 import ru.cedra.landingbot.config.audit.AuditEventConverter;
 import ru.cedra.landingbot.domain.PersistentAuditEvent;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LandingbotApp.class)
 @Transactional
+@Ignore
 public class AuditResourceIntTest {
 
     private static final String SAMPLE_PRINCIPAL = "SAMPLE_PRINCIPAL";

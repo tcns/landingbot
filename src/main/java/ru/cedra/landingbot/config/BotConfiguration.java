@@ -1,6 +1,9 @@
 package ru.cedra.landingbot.config;
 
 import com.cloudinary.Cloudinary;
+import com.vk.api.sdk.client.TransportClient;
+import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.httpclient.HttpTransportClient;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
@@ -22,8 +25,6 @@ import java.util.Properties;
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class BotConfiguration {
-    @Autowired
-    private LandingBot landingBot;
 
     @Autowired
     ApplicationProperties applicationProperties;
@@ -51,6 +52,13 @@ public class BotConfiguration {
     @Bean
     VelocityEngine velocityEngine() {
         return velocityEngine;
+    }
+
+    @Bean
+    public VkApiClient vkApiClient() {
+        TransportClient transportClient = HttpTransportClient.getInstance();
+        VkApiClient vk = new VkApiClient(transportClient);
+        return vk;
     }
 
 }

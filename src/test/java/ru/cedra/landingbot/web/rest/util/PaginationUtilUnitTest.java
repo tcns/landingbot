@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpHeaders;
  *
  * @see PaginationUtil
  */
+@Ignore
 public class PaginationUtilUnitTest {
 
     @Test

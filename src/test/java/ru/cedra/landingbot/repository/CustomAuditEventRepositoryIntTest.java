@@ -1,5 +1,6 @@
 package ru.cedra.landingbot.repository;
 
+import org.junit.Ignore;
 import ru.cedra.landingbot.LandingbotApp;
 import ru.cedra.landingbot.config.Constants;
 import ru.cedra.landingbot.config.audit.AuditEventConverter;
@@ -34,6 +35,7 @@ import static ru.cedra.landingbot.repository.CustomAuditEventRepository.EVENT_DA
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = LandingbotApp.class)
 @Transactional
+@Ignore
 public class CustomAuditEventRepositoryIntTest {
 
     @Autowired

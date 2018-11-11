@@ -395,6 +395,11 @@
             <version>2.2</version>
         </dependency>
         <dependency>
+            <groupId>com.vk.api</groupId>
+            <artifactId>sdk</artifactId>
+            <version>0.5.12</version>
+        </dependency>
+        <dependency>
             <groupId>org.zeroturnaround</groupId>
             <artifactId>zt-zip</artifactId>
             <version>1.13</version>
@@ -417,6 +422,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+                    <compilerVersion>1.8</compilerVersion>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.mapstruct</groupId>
@@ -428,6 +436,11 @@
                             <groupId>org.hibernate</groupId>
                             <artifactId>hibernate-jpamodelgen</artifactId>
                             <version>${hibernate.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.2</version>
                         </path>
 
                     </annotationProcessorPaths>
@@ -980,41 +993,6 @@
                 <!-- default Spring profiles -->
                 <spring.profiles.active>dev,swagger</spring.profiles.active>
             </properties>
-        </profile>
-        <profile>
-            <!--
-                Profile for monitoring the application with Graphite.
-            -->
-            <id>graphite</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.dropwizard.metrics</groupId>
-                    <artifactId>metrics-graphite</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <!--
-                Profile for monitoring the application with Prometheus.
-            -->
-            <id>prometheus</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.prometheus</groupId>
-                    <artifactId>simpleclient</artifactId>
-                    <version>${prometheus-simpleclient.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>io.prometheus</groupId>
-                    <artifactId>simpleclient_servlet</artifactId>
-                    <version>${prometheus-simpleclient.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>io.prometheus</groupId>
-                    <artifactId>simpleclient_dropwizard</artifactId>
-                    <version>${prometheus-simpleclient.version}</version>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <!--

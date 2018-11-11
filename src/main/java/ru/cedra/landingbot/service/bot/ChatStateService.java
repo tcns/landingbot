@@ -38,6 +38,18 @@ public class ChatStateService {
         return updateStepAndGetMessage(step, chatId, "");
     }
 
+    public int saveMessageIdGetPrevious (long chatId, int messageId) {
+        ChatState
+            chatState = chatStateRepository.findOneByChatUser_TelegramChatId(chatId);
+        int prev = 0;
+        if (chatState != null) {
+            prev = chatState.getPreviousMessageId();
+            chatState.setPreviousMessageId(messageId);
+            chatStateRepository.save(chatState);
+        }
+        return prev;
+    }
+
     public SendMessage updateStepAndGetMessage (Integer step, Long chatId, String data) {
         updateChatStep(step, chatId, data);
         SendMessage message = new SendMessage();

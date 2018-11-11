@@ -1,6 +1,9 @@
 package ru.cedra.landingbot.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,6 +15,9 @@ import java.util.Set;
  * Created by tignatchenko on 25/04/17.
  */
 @Entity
+@Data
+@EqualsAndHashCode(exclude={"yaToken", "telegramUsername", "landings", "chatState"})
+@ToString(exclude={"yaToken", "telegramUsername", "landings", "chatState"})
 public class ChatUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +25,6 @@ public class ChatUser implements Serializable {
 
     @Column
     private String telegramUsername;
-
 
     @Column
     private Long telegramChatId;
@@ -35,52 +40,4 @@ public class ChatUser implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "chatUser")
     private Set<MainPage> landings = new HashSet<>();
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTelegramUsername() {
-        return telegramUsername;
-    }
-
-    public void setTelegramUsername(String telegramUsername) {
-        this.telegramUsername = telegramUsername;
-    }
-
-    public String getYaToken() {
-        return yaToken;
-    }
-
-    public void setYaToken(String yaToken) {
-        this.yaToken = yaToken;
-    }
-
-    public ChatState getChatState() {
-        return chatState;
-    }
-
-    public void setChatState(ChatState chatState) {
-        this.chatState = chatState;
-    }
-
-    public Long getTelegramChatId() {
-        return telegramChatId;
-    }
-
-    public void setTelegramChatId(Long telegramChatId) {
-        this.telegramChatId = telegramChatId;
-    }
-
-    public Set<MainPage> getLandings() {
-        return landings;
-    }
-
-    public void setLandings(Set<MainPage> landings) {
-        this.landings = landings;
-    }
 }

@@ -1,6 +1,9 @@
 package ru.cedra.landingbot.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -12,6 +15,9 @@ import java.io.Serializable;
  * Created by tignatchenko on 23/04/17.
  */
 @Entity
+@Data
+@ToString(exclude = {"chatUser"})
+@EqualsAndHashCode(exclude = {"chatUser"})
 public class ChatState implements Serializable {
 
     @Id
@@ -24,40 +30,11 @@ public class ChatState implements Serializable {
     @Column
     private String data;
 
+    @Column
+    int previousMessageId;
+
     @JsonIgnore
     @OneToOne
     @PrimaryKeyJoinColumn
     private ChatUser chatUser;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getStep() {
-        return step;
-    }
-
-    public void setStep(Integer step) {
-        this.step = step;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public ChatUser getChatUser() {
-        return chatUser;
-    }
-
-    public void setChatUser(ChatUser chatUser) {
-        this.chatUser = chatUser;
-    }
 }

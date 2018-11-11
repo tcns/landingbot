@@ -1,4 +1,4 @@
-package ru.cedra.landingbot.service;
+package ru.cedra.landingbot.service.scraper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.postaddict.instagram.scraper.Instagram;
@@ -41,23 +41,13 @@ public class ScraperService {
     private static final Pattern JSON_PATTERN = Pattern.compile(
         String.format("window\\._sharedData = (?<%s>.+);</script>", GROUP_NAME));
 
-    private static final HttpEntity REQUEST_ENTITY;
-    static {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("authority", "socialblade.com");
-        headers.set("accept", "ext/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-        headers.set("upgrade-insecure-requests", "1");
-        headers.set("Accept-Language", "en");
-        headers.set("user-agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36");
-        REQUEST_ENTITY = new HttpEntity(headers);
-    }
+    private static final HttpEntity REQUEST_ENTITY = ScraperUtils.getEntity();
+
     public List<String> extractInstagramGallery(String instagramUrl, int count) throws IOException {
 
         String pageContent = restTemplate.exchange("https://www.instagram.com/" + getAccountName(instagramUrl) + "/", HttpMethod.GET, REQUEST_ENTITY, String.class).getBody();
 
-        String val = getFieldValueFromPage(pageContent, JSON_PATTERN);
-        HashMap<String,Object> result =
-            objectMapper.readValue(val, HashMap.class);
+        String val = ScraperUtils.getFieldValueFromPage(pageContent, JSON_PATTERN, GROUP_NAME);
         InstagramData object =
             objectMapper.readValue(val, InstagramData.class);
         List<String> response = object.getEntryData().getProfilePage().get(0)
@@ -82,10 +72,5 @@ public class ScraperService {
         return name;
 
     }
-    private final String getFieldValueFromPage(String pageContent, Pattern pattern) {
-        return Optional.of(pattern.matcher(pageContent))
-            .filter(Matcher::find)
-            .map(matcher -> matcher.group(GROUP_NAME))
-            .orElse("");
-    }
+
 }

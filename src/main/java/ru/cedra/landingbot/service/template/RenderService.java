@@ -4,10 +4,8 @@ import io.bit3.jsass.CompilationException;
 import io.bit3.jsass.Compiler;
 import io.bit3.jsass.Options;
 import io.bit3.jsass.Output;
-import me.postaddict.instagram.scraper.Instagram;
-import me.postaddict.instagram.scraper.model.Account;
-import okhttp3.OkHttpClient;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -16,7 +14,8 @@ import org.springframework.stereotype.Service;
 import org.zeroturnaround.zip.ZipUtil;
 import ru.cedra.landingbot.config.ApplicationProperties;
 import ru.cedra.landingbot.domain.MainPage;
-import ru.cedra.landingbot.service.ScraperService;
+import ru.cedra.landingbot.service.scraper.ScraperService;
+import ru.cedra.landingbot.service.scraper.VkScraper;
 import ru.cedra.landingbot.service.util.DirectoryUtil;
 
 import java.io.BufferedWriter;
@@ -44,6 +43,8 @@ public class RenderService {
     ApplicationProperties applicationProperties;
     @Autowired
     ScraperService scraperService;
+    @Autowired
+    VkScraper vkScraper;
 
     public  File renderMain (MainPage page) throws IOException {
         Template template = engine.getTemplate(applicationProperties.getTemplatePath() + "/index-template.html", "UTF-8");
@@ -52,6 +53,10 @@ public class RenderService {
 
 
         page.setGallery(scraperService.extractInstagramGallery(page.getInstagram(), 16));
+        if (StringUtils.isNotBlank(page.getVk())) {
+            page.setGoods(vkScraper.getCatalog(page.getVk()));
+        }
+
         velocityContext.put("page", page);
 
         Path dirPath = DirectoryUtil.createAndGet(applicationProperties.getExportPath()+

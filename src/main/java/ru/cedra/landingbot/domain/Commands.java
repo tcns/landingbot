@@ -1,5 +1,9 @@
 package ru.cedra.landingbot.domain;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by tignatchenko on 23/04/17.
  */
@@ -15,6 +19,8 @@ public class Commands {
     public static final String LANDING_LIST = "/landinglist";
 
     public static final String LANDING_EXPORT = "/landingexport";
+
+    public static final String LANDING_CONTINUE = "/landingcontinue";
 
     public static final String LANDING_STATS = "/landingstats";
 
@@ -36,10 +42,23 @@ public class Commands {
 
     public static final String EXPORT_ONE_LANDING = "/exportlanding-";
 
+    public static final String CONTINUE_ONE_LANDING = "/continuelanding-";
+
     public static final String EDIT_ONE_PARAM = "/editparam-";
 
     public static final String DEALS_EDIT_FINAL = "dealsedit-";
 
     public static final String EDIT_ONE_PARAM_FINAL = "edit-";
+
+    public static Map<String, String> MAIN_COMMANDS = new LinkedHashMap<>();
+    static {
+        MAIN_COMMANDS.put(ADD_LANDING, "Создать");
+        MAIN_COMMANDS.put(DELETE_LANDING, "Удалить");
+        MAIN_COMMANDS.put(EDIT_LANDING, "Редактировать");
+        MAIN_COMMANDS.put(LANDING_CONTINUE, "Продолжить заполнять");
+        MAIN_COMMANDS.put(LANDING_LIST, "Список");
+        MAIN_COMMANDS.put(LANDING_EXPORT, "Экспорт");
+        MAIN_COMMANDS.put(MAIN, "Меню");
+    }
 
 }

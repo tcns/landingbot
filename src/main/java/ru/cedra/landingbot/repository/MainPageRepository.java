@@ -10,4 +10,5 @@ import java.util.Set;
  */
 public interface MainPageRepository extends JpaRepository<MainPage, Long> {
     Set<MainPage> findByChatUser_TelegramChatId(Long chatId);
+    Set<MainPage> findByChatUser_TelegramChatIdAndCompleted(Long chatId, boolean completed);
 }

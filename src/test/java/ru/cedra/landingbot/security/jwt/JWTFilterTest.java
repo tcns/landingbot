@@ -1,5 +1,6 @@
 package ru.cedra.landingbot.security.jwt;
 
+import org.junit.Ignore;
 import ru.cedra.landingbot.security.AuthoritiesConstants;
 import io.github.jhipster.config.JHipsterProperties;
 import org.junit.Before;
@@ -17,6 +18,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Ignore
 public class JWTFilterTest {
 
 

@@ -7,9 +7,11 @@ import org.hibernate.annotations.GenericGenerator;
 import ru.cedra.landingbot.anno.Cast;
 import ru.cedra.landingbot.anno.CastMethod;
 import ru.cedra.landingbot.anno.Step;
+import ru.cedra.landingbot.domain.dto.vk.Good;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
@@ -99,6 +101,13 @@ public class MainPage implements Serializable {
     @Step(ChatSteps.PIC_STEP)
     private String pic;
 
+    @Column
+    private ZonedDateTime createDate;
+
+    private boolean completed = false;
+
+    private Integer chatStep;
+
     @JsonIgnore
     @ManyToOne
     private ChatUser chatUser;
@@ -106,6 +115,10 @@ public class MainPage implements Serializable {
     @Transient
     @JsonInclude
     private List<String> gallery;
+
+    @Transient
+    @JsonInclude
+    private List<Good> goods;
 
     @Override
     public String toString() {

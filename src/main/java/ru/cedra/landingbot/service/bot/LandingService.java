@@ -21,7 +21,10 @@ import ru.cedra.landingbot.service.template.RenderService;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Stream;
 
 
 /**
@@ -48,6 +51,16 @@ public class LandingService {
     @Autowired
     RenderService renderService;
 
+    public SendMessage initConversation (Long chatId, long pageId) {
+
+        MainPage page = mainPageRepository.findOne(pageId);
+        SendMessage message = new SendMessage()
+            .setChatId(chatId)
+            .setText(ChatSteps.states.get(page.getChatStep() + 1));
+
+        chatStateService.updateChatStep(page.getChatStep() + 1, chatId, pageId+"");
+        return message;
+    }
     public SendMessage initConversation (Long chatId) {
 
         SendMessage message = new SendMessage()
@@ -55,6 +68,9 @@ public class LandingService {
             .setText(ChatSteps.states.get(1));
         MainPage page = new MainPage();
         page.setChatUser(service.getChatUser(chatId));
+        page.setCreateDate(ZonedDateTime.now());
+        page.setCompleted(false);
+        page.setChatStep(0);
         page = mainPageRepository.save(page);
         chatStateService.updateChatStep(1, chatId, page.getId()+"");
         return message;
@@ -96,10 +112,8 @@ public class LandingService {
 
         SendMessage sendMessage;
         Long pageId = 0L;
-        boolean isEdit = false;
         String editType = "";
         if (chatState.getData().startsWith(Commands.EDIT_ONE_PARAM_FINAL)) {
-            isEdit = true;
             editType = Commands.EDIT_ONE_PARAM_FINAL;
             try {
                 pageId = Long.parseLong(chatState.getData().substring(Commands.EDIT_ONE_PARAM_FINAL
@@ -127,6 +141,10 @@ public class LandingService {
             chatStateService.updateChatStep(0, chatId);
             sendMessage = new SendMessage().setText(ChatSteps.states.get(ChatSteps.FINAL_STEP))
                 .setChatId(chatId);
+            if (chatStep == ChatSteps.FINAL_STEP - 1) {
+                page.setCompleted(true);
+                page.setChatStep(0);
+            }
             try {
                 renderService.renderMain(page);
             } catch (IOException e) {
@@ -139,6 +157,7 @@ public class LandingService {
             chatStateService.updateChatStep(0, chatId);
             sendMessage = chatStateService.updateStepAndGetMessage(0, chatId, "Значение успешно обновлено");
         } else {
+            page.setChatStep(chatStep);
             sendMessage = chatStateService.updateStepAndGetMessage(chatStep + 1, chatId, pageId + "");
         }
 
@@ -147,14 +166,58 @@ public class LandingService {
 
 
     }
+
+    public SendMessage getMainMenu(Long chatId) {
+        InlineKeyboardMarkup replyMarkup = new InlineKeyboardMarkup();
+        final List<List<InlineKeyboardButton>> keyboardButtons = new ArrayList<>();
+
+        Commands.MAIN_COMMANDS.entrySet().forEach((command) -> {
+            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+            inlineKeyboardButton.setText(command.getValue());
+            inlineKeyboardButton.setCallbackData(command.getKey());
+            keyboardButtons.add(Collections.singletonList(inlineKeyboardButton));
+        });
+
+        replyMarkup.setKeyboard(keyboardButtons);
+        return new SendMessage().setText("Главное меню")
+            .setChatId(chatId)
+            .setReplyMarkup(replyMarkup);
+    }
+    public InlineKeyboardMarkup getMainMenuButton() {
+        InlineKeyboardMarkup replyMarkup = new InlineKeyboardMarkup();
+        final List<List<InlineKeyboardButton>> keyboardButtons = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(">>>>>Вернуться в меню");
+        inlineKeyboardButton.setCallbackData(Commands.MAIN);
+        keyboardButtons.add(Collections.singletonList(inlineKeyboardButton));
+
+        replyMarkup.setKeyboard(keyboardButtons);
+        return replyMarkup;
+    }
     public SendMessage getLandingList(Long chatId, String command) {
+        return getLandingList(chatId, command, false);
+    }
+    public SendMessage getLandingList(Long chatId, String command, boolean onlyDraft) {
         Set<MainPage> pages = mainPageRepository.findByChatUser_TelegramChatId(chatId);
+        if (onlyDraft) {
+            pages = mainPageRepository.findByChatUser_TelegramChatIdAndCompleted(chatId, false);
+        }
         InlineKeyboardMarkup replyMarkup = new InlineKeyboardMarkup();
         final List<List<InlineKeyboardButton>> keyboardButtons = new ArrayList<>(pages.size());
 
         pages.stream().forEach((page) -> {
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-            inlineKeyboardButton.setText(page.getName()==null?"Не указано":page.getName());
+            String pageName = "";
+            if (!page.isCompleted()) {
+                pageName += "Черновик: ";
+            }
+            pageName += page.getName()==null?"Не указано":page.getName();
+            if (page.getCreateDate() != null) {
+                pageName += ": " + page.getCreateDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            }
+
+            inlineKeyboardButton.setText(pageName);
             inlineKeyboardButton.setCallbackData(command+page.getId());
             keyboardButtons.add(Collections.singletonList(inlineKeyboardButton));
         });
