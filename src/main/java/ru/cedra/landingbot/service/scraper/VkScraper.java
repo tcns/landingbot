@@ -49,19 +49,19 @@ public class VkScraper {
 
 
 
-    public static void main(String[] args) throws ClientException, ApiException {
-        VkScraper scraper = new VkScraper();
-        if (scraper.vk == null) {
-            BotConfiguration botConfiguration = new BotConfiguration();
-            scraper.vk = botConfiguration.vkApiClient();
-            scraper.restTemplate = new RestTemplate();
-        }
-        ServiceActor serviceActor = scraper.auth();
-        long groupId = scraper.getGroupId(serviceActor, "https://vk.com/bani_muromets");
-        List<Good> marketItemsResponse = scraper.getMarketItemsResponse(groupId);
-
-        System.out.println();
-    }
+//    public static void main(String[] args) throws ClientException, ApiException {
+//        VkScraper scraper = new VkScraper();
+//        if (scraper.vk == null) {
+//            BotConfiguration botConfiguration = new BotConfiguration();
+//            scraper.vk = botConfiguration.vkApiClient();
+//            scraper.restTemplate = new RestTemplate();
+//        }
+//        ServiceActor serviceActor = scraper.auth();
+//        long groupId = scraper.getGroupId(serviceActor, "https://vk.com/bani_muromets");
+//        List<Good> marketItemsResponse = scraper.getMarketItemsResponse(groupId);
+//
+//        System.out.println();
+//    }
 
     public List<Good> getCatalog(String vkPath) {
         ServiceActor serviceActor = auth();
