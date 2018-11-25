@@ -49,6 +49,8 @@ public class RenderService {
     public  File renderMain (MainPage page) throws IOException {
         Template template = engine.getTemplate(applicationProperties.getTemplatePath() + "/index-template.html", "UTF-8");
 
+        Template cssTemplate = engine.getTemplate(applicationProperties.getTemplatePath() + "/sass/_vars_template.sass", "UTF-8");
+
         VelocityContext velocityContext = new VelocityContext();
 
 
@@ -67,15 +69,25 @@ public class RenderService {
         }
         FileUtils.copyDirectory(DirectoryUtil.getResource(applicationProperties.getTemplatePath()),
             dirPath.toFile());
+
         File file = new File(directory + "/" +
             "index.html");
         String path = file.getAbsolutePath();
+
+        String sassPath = new File(directory + "/sass/_vars.sass").getAbsolutePath();
+
+
         logger.info("file saved " + path);
         BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-
         template.merge(velocityContext, writer);
         writer.flush();
         writer.close();
+
+        BufferedWriter sassWriter = new BufferedWriter(new FileWriter(sassPath));
+        cssTemplate.merge(velocityContext, sassWriter);
+        sassWriter.flush();
+        sassWriter.close();
+
         Compiler compiler = new Compiler();
         URI inputFile = new File(directory + "/sass/main.sass").toURI();
         URI outputFile = new File(directory + "/css/main.css").toURI();
@@ -88,7 +100,8 @@ public class RenderService {
             logger.info("Compiled successfully");
             return response;
         } catch (CompilationException e) {
-            logger.log(Level.SEVERE, "Compile failed");
+            e.printStackTrace();
+            logger.log(Level.SEVERE, "Compile failed " + e.getErrorMessage());
         }
         return null;
     }

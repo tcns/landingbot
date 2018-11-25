@@ -2,8 +2,8 @@
 <html lang="ru">
 	<head>
 		<meta charset="utf-8">
-		<title>Акриловые коробки для цветов оптом от производителя FLORIST MARKET</title>
-		<meta name="description" content="Прозрачные стеклянные коробки под цветы из оргстекла и акрила. Купить оптом с доставкой по РФ и СНГ. Собственное производство.">
+		<title>${page.name}</title>
+		<meta name="description" content="${page.keywordDesc}">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
@@ -61,7 +61,16 @@
 		<header>
 			<div class="container">
 				<div class="row">
-					<div class="col-md-2 col-sm-2 col-xs-12"><div class="logo"><img src="${page.logo}" class="img-responsive"></div></div>
+					<div class="col-md-2 col-sm-2 col-xs-12">
+
+                        <div class="logo">
+                        #if (!$page.logo || $page.logo=='N')
+                            <span>${page.name}</span>
+                        #else
+                            <img src="${page.logo}" class="img-responsive">
+                        #end
+                        </div>
+                    </div>
 					<div class="col-md-6 col-sm-4 col-xs-6"><div class="description">${page.desc}</div></div>
 					<div class="col-md-4 col-sm-6 col-xs-6">
 						<div class="callback_wrap">
@@ -92,29 +101,38 @@
 					</div>
                     #end
 				</div>
-				<div class="row">
-					<div class="col-md-offset-4 col-sm-offset-3 col-md-4 col-sm-6 col-xs-12">
-							<div class="banner-btn-wrap pdf_btn ">
-									<div class="btn banner-btn fullwidth_btn" onclick="popup('download')">Скачать каталог PDF<span class="pdf_icon"><img src="img/pdf_icon.png" alt=""></span></div>
-								</div>
-					</div>
-				</div>
+				<!--<div class="row">-->
+					<!--<div class="col-md-offset-4 col-sm-offset-3 col-md-4 col-sm-6 col-xs-12">-->
+							<!--<div class="banner-btn-wrap pdf_btn ">-->
+									<!--<div class="btn banner-btn fullwidth_btn" onclick="popup('download')">Скачать каталог PDF<span class="pdf_icon"><img src="img/pdf_icon.png" alt=""></span></div>-->
+								<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
 			</div>
 		</div>
 		<div class="section-4" id="section-4">
 			<div class="container">
-				<div class="h2_title honly text-center">Нужно несколько разных позиций или<br> коробки по индивидуальным размерам?</div>
+				<div class="h2_title honly text-center">${page.formTitle}</div>
 				<div class="row ">
 					<div class=" col-md-10 col-md-offset-1 col-xs-12 col-sm-12">
 						<div class="goriz-form-wrap1">
 							<p>${page.formTitle}</p>
 							<form action="" method="post" class="goriz-form clearfix">
+                                #if ($page.hasFormClientName)
 								<div class="goriz-input-wrap input-wrap">
 									<input class="name" type="text" name="name" plSaceholder="Ваше имя">
 								</div>
+                                #end
+                                #if ($page.hasFormClientPhone)
 								<div class="goriz-input-wrap input-wrap">
 									<input class="phone" type="text" name="phone" placeholder="Ваш телефон">
 								</div>
+                                #end
+                                #if ($page.hasFormClientEmail)
+                                <div class="goriz-input-wrap input-wrap">
+                                    <input class="email" type="text" name="email" placeholder="Ваш Email">
+                                </div>
+                                #end
 								<input type="hidden" name="medium" class="medium" value="">
 								<input type="hidden" name="source" class="source" value="">
 								<input type="hidden" name="content" class="content" value="">
@@ -254,7 +272,6 @@
 							<li class="nav-item1"><a href="#test" class="scroll-btn">Тестовая партия</a></li>
 							<li class="nav-item1"><a href="#photos" class="scroll-btn">Фотогалерея</a></li>
 							<li class="nav-item1"><a href="#delivery" class="scroll-btn">Доставка и оплата</a></li>
-							<!-- <li class="nav-item1"><a href="#about" class="scroll-btn">О нас</a></li> -->
 							<li class="nav-item1"><a href="#contacts" class="scroll-btn">Контакты</a></li>
                         </ul>
                     </div>
