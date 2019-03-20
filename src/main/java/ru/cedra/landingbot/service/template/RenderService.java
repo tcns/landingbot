@@ -64,9 +64,9 @@ public class RenderService {
         Path dirPath = DirectoryUtil.createAndGet(applicationProperties.getExportPath()+
             "/"+page.getChatUser().getTelegramChatId()+"/"+page.getId());
         String directory = dirPath.toAbsolutePath().toString();
-        if (!Files.exists(Paths.get(directory+"/"+"index.html"))) {
-            FileUtils.deleteDirectory(DirectoryUtil.getResource(applicationProperties.getTemplatePath()));
-        }
+//        if (!Files.exists(Paths.get(directory+"/"+"index.html"))) {
+//            FileUtils.deleteDirectory(DirectoryUtil.getResource(applicationProperties.getTemplatePath()));
+//        }
         FileUtils.copyDirectory(DirectoryUtil.getResource(applicationProperties.getTemplatePath()),
             dirPath.toFile());
 

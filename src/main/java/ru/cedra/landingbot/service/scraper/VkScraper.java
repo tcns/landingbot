@@ -66,10 +66,10 @@ public class VkScraper {
     public List<Good> getCatalog(String vkPath) {
         ServiceActor serviceActor = auth();
         try {
-            long groupId = getGroupId(serviceActor, "https://vk.com/bani_muromets");
+            long groupId = getGroupId(serviceActor, vkPath);
             return getMarketItemsResponse(groupId);
-        } catch (ClientException | ApiException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            //e.printStackTrace();
         }
         return new ArrayList<>();
     }

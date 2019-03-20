@@ -17,6 +17,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -30,6 +32,8 @@ public class LandingbotApp {
     private static final Logger log = LoggerFactory.getLogger(LandingbotApp.class);
 
     private final Environment env;
+    public static String IMAGE_DIR;
+
 
     public LandingbotApp(Environment env) {
         this.env = env;
@@ -61,7 +65,8 @@ public class LandingbotApp {
      * @param args the command line arguments
      * @throws UnknownHostException if the local host name could not be resolved into an address
      */
-    public static void main(String[] args) throws UnknownHostException {
+    public static void main(String[] args) throws IOException {
+        IMAGE_DIR = new File(".").getCanonicalPath() + "/sites/";
         SpringApplication app = new SpringApplication(LandingbotApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         ApiContextInitializer.init();

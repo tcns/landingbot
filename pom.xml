@@ -140,6 +140,11 @@
             <version>${dropwizard-metrics.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.github.ajalt</groupId>
+            <artifactId>colormath</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-servlets</artifactId>
         </dependency>
@@ -521,6 +526,10 @@
                                         <exclude>**/*.yml</exclude>
                                     </excludes>
                                 </resource>
+                                <resource>
+                                    <directory>src/main/resources/</directory>
+                                </resource>
+
                             </resources>
                         </configuration>
                     </execution>
@@ -1018,4 +1027,10 @@
             </dependencies>
         </profile>
     </profiles>
+    <repositories>
+        <repository>
+            <id>clojars.org</id>
+            <url>https://repo.clojars.org</url>
+        </repository>
+    </repositories>
 </project>

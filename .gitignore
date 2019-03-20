@@ -16,6 +16,8 @@ npm-debug.log.*
 # SASS
 ######################
 .sass-cache/
+muromets
+muromets.zip
 
 ######################
 # Eclipse

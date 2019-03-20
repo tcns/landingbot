@@ -51,6 +51,8 @@ public class BotConfiguration {
 
     @Bean
     VelocityEngine velocityEngine() {
+        velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+        velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         return velocityEngine;
     }
 
